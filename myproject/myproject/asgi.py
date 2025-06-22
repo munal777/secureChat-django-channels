@@ -14,6 +14,6 @@ from channels.routing import ProtocolTypeRouter
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'myproject.settings')
 
-application = ProtocolTypeRouter({
-    "http": get_asgi_application(),
+application = ProtocolTypeRouter({  # 	This class Routes requests by protocol type
+    "http": get_asgi_application(), # Django’s built-in function to return an ASGI application instance to handle HTTP requests
 })
