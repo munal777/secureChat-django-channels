@@ -43,10 +43,24 @@ class ChatConsumer(AsyncWebsocketConsumer):
         await self.channel_layer.group_send(
             self.room_group_name,
             {
-                'type': 'chat_message',
+                'type': 'chat_message', # handler name to be called
                 'message': message
             }
         )
 
-    # async def chat_message(self, event):
+    # custom event handler that is called automatically when msg is send to group using group_send()
+    async def chat_message(self, event):
+        message = event['message']
+
+        # send method sends data to client
+        await self.send(text_data=json.dumps({
+            'message': message
+        })) 
+    
+    async def disconnect(self, code):
+        
+        self.channel_layer.group_discard(
+            self.room_group_name,
+            self.channel_name
+        )
 
