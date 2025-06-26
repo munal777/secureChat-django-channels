@@ -25,7 +25,7 @@ class EchoConsumer(SyncConsumer):
         })
 
 class ChatConsumer(AsyncWebsocketConsumer):
-    
+
     async def connect(self):
         self.room_group_name = "chatroom"
 
@@ -35,3 +35,18 @@ class ChatConsumer(AsyncWebsocketConsumer):
         )
 
         await self.accept()
+    
+    async def receive(self, text_data=None, bytes_data=None):
+        text_data_json = json.loads(text_data)
+        message = text_data_json['message']
+
+        await self.channel_layer.group_send(
+            self.room_group_name,
+            {
+                'type': 'chat_message',
+                'message': message
+            }
+        )
+
+    # async def chat_message(self, event):
+
