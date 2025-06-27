@@ -24,7 +24,7 @@ class EchoConsumer(SyncConsumer):
             "text": response,
         })
 
-class ChatConsumer(AsyncWebsocketConsumer):
+class PublicChatConsumer(AsyncWebsocketConsumer):
 
     async def connect(self):
         self.room_group_name = "chatroom"
@@ -64,3 +64,35 @@ class ChatConsumer(AsyncWebsocketConsumer):
             self.channel_name
         )
 
+
+
+class PrivateChatConsumer(AsyncWebsocketConsumer):
+
+    async def connect(self):
+        self.room_name = self.scope['url_route']['kwargs']['room_name']
+        self.room_group_name = f"chat_{self.room_name}"
+
+        users_id = self.room_name.split('_')
+        if str(self.scope["user"].id) not in users_id:
+            await self.close()
+
+        self.channel_layer.group_add(
+            self.room_group_name,
+            self.channel_name
+        )
+
+        self.accept()
+    
+    async def receive(self, text_data):
+        text_data_json = json.loads(text_data)
+        message = text_data_json['message']
+        username = self.scope["user"].username 
+        
+        await self.channel_layer.group_send(
+            self.room_group_name,
+            {
+                'type': 'chat_message',
+                'message': message,
+                'sender': username
+            }
+        )
