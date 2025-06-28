@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Private Chat</title>
+    <meta charset="UTF-8">
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f6f8;
+        }
+
+        #chat-container {
+            width: 90%;
+            max-width: 800px;
+            margin: 40px auto;
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 0 8px rgba(0,0,0,0.1);
+        }
+
+        #chat-log {
+            height: 300px;
+            overflow-y: scroll;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 10px;
+            background: #f9f9f9;
+            margin-bottom: 15px;
+        }
+
+        #chat-log p {
+            margin: 5px 0;
+        }
+
+        #chat-input {
+            display: flex;
+            gap: 10px;
+        }
+
+        #message-input {
+            flex: 1;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        #send-button {
+            padding: 10px 20px;
+            background-color: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #send-button:hover {
+            background-color: #2563eb;
+        }
+    </style>
+</head>
+<body>
+<div id="chat-container">
+    <h2>Private Chat Room: <span id="room-name">{{ room_name }}</span></h2>
+    <div id="chat-log"></div>
+    <div id="chat-input">
+        <input type="text" id="message-input" placeholder="Type your message..." autocomplete="off">
+        <button id="send-button">Send</button>
+    </div>
+</div>
+
+<script>
+    const roomName = "{{ room_name }}";
+    const chatSocket = new WebSocket(
+        'ws://' + window.location.host + '/ws/chat/' + roomName + '/'
+    );
+
+    const chatLog = document.getElementById('chat-log');
+    const messageInput = document.getElementById('message-input');
+    const sendButton = document.getElementById('send-button');
+
+    // On receiving message
+    chatSocket.onmessage = function(e) {
+        const data = JSON.parse(e.data);
+        const message = data.message;
+        const sender = data.sender;
+        const p = document.createElement('p');
+        p.innerHTML = `<strong>${sender}:</strong> ${message}`;
+        chatLog.appendChild(p);
+        chatLog.scrollTop = chatLog.scrollHeight;
+    };
+
+    // On sending message
+    sendButton.onclick = function() {
+        const message = messageInput.value.trim();
+        if (message) {
+            chatSocket.send(JSON.stringify({
+                'message': message
+            }));
+            messageInput.value = '';
+        }
+    };
+
+    messageInput.addEventListener("keypress", function(e) {
+        if (e.key === "Enter") {
+            sendButton.click();
+        }
+    });
+</script>
+</body>
+</html>

@@ -96,3 +96,13 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
                 'sender': username
             }
         )
+
+    async def chat_message(self, event):
+        self.send(
+            text_data=json.dumps(
+                {
+                    'message': event['message'],
+                    'sender': event['sender']
+                }
+            )
+        )
