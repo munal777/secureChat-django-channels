@@ -7,4 +7,4 @@ def chat_view(request, room_name):
     return render(request, 'chat.html', {'room_name': room_name})
 
 
-        # JGHJKDASKJDA 
+        
