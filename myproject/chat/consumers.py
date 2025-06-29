@@ -76,12 +76,12 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
         if str(self.scope["user"].id) not in users_id:
             await self.close()
 
-        self.channel_layer.group_add(
+        await self.channel_layer.group_add(
             self.room_group_name,
             self.channel_name
         )
 
-        self.accept()
+        await self.accept()
     
     async def receive(self, text_data):
         text_data_json = json.loads(text_data)
@@ -98,11 +98,17 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
         )
 
     async def chat_message(self, event):
-        self.send(
+        await self.send(
             text_data=json.dumps(
                 {
                     'message': event['message'],
                     'sender': event['sender']
                 }
             )
+        )
+    
+    async def disconnect(self, close_code):
+        await self.channel_layer.group_discard(
+            self.room_group_name,
+            self.channel_name
         )

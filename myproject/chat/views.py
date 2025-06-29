@@ -12,9 +12,17 @@ def chat_view(request, room_name):
 
 @login_required
 def dashboard_view(request):
+    current_user = request.user
     users = User.objects.exclude(id=request.user.id)
 
+    user_rooms = [
+        {
+            "username": user.username,
+            "room_name": make_room_name(current_user.id, user.id),
+        }
+        for user in users
+    ]
+
     return render(request, "dashboard.html", {
-        "users": users,
-        "make_room_name": make_room_name,
+        "user_rooms": user_rooms
     })
