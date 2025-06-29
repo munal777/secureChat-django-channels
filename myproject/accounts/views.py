@@ -36,7 +36,7 @@ def login_view(request):
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
-            return redirect("dashboard")  # Change this to any protected page
+            return redirect("dashboard") 
         else:
             messages.error(request, "Invalid username or password.")
             return redirect("login")
