@@ -10,8 +10,8 @@ def chat_view(request, room_name):
     return render(request, 'chat.html', {'room_name': room_name})
 
 
-
-def chat_user_list(request):
+@login_required
+def dashboard_view(request):
     users = User.objects.exclude(id=request.user.id)
 
     return render(request, "dashboard.html", {
