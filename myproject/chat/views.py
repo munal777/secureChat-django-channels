@@ -11,15 +11,14 @@ def chat_view(request, room_name):
 
     members_list = []
 
-    
-    try:
-        for member_id in room_members_id:
+    for member_id in room_members_id:
+        try:
             user = User.objects.get(id=int(member_id))
 
             members_list.append(user.username)            
 
-    except User.DoesNotExist:
-        return redirect('dashboard')
+        except User.DoesNotExist:
+            return redirect('dashboard')
     
     members_name = " & ".join(members_list)
         
