@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model
 from .utils import make_room_name
+from .models import Message
 
 User = get_user_model()
 
@@ -21,11 +22,13 @@ def chat_view(request, room_name):
             return redirect('dashboard')
     
     members_name = " & ".join(members_list)
-        
 
+    messages = Message.objects.filter(room_name=room_name).order_by("timestamp")
+        
     return render(request, 'chat.html', {
         'room_name': room_name,
         'room_member': members_name,
+        'messages': messages,
     })
 
 
