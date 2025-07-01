@@ -91,7 +91,7 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
         user = self.scope["user"]
 
         # Save the message in the DB
-        await self.save_message(user, self.room_name, message)
+        await save_message(user, self.room_name, message)
         
         await self.channel_layer.group_send(
             self.room_group_name,
