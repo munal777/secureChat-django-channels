@@ -790,7 +790,8 @@
 
                  // Send to WebSocket
                  chatSocket.send(JSON.stringify({
-                     'message': message
+                    'type': 'text',
+                    'message': message
                  }));
 
                  messageInput.value = '';

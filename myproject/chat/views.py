@@ -16,7 +16,8 @@ def chat_view(request, room_name):
         try:
             user = User.objects.get(id=int(member_id))
 
-            members_list.append(user.username)            
+            if not user.id == request.user.id:
+                members_list.append(user.username)            
 
         except User.DoesNotExist:
             return redirect('dashboard')
@@ -41,7 +42,7 @@ def dashboard_view(request):
         {
             "username": user.username,
             "room_name": make_room_name(current_user.id, user.id),
-            "room_member": f"{current_user.username} {user.username}"
+            # "room_member": f"{current_user.username} {user.username}"
         }
         for user in users
     ]

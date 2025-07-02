@@ -86,31 +86,54 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
         await self.accept()
     
     async def receive(self, text_data):
-        text_data_json = json.loads(text_data)
-        message = text_data_json['message']
+        data= json.loads(text_data)
         user = self.scope["user"]
 
-        # Save the message in the DB
-        await save_message(user, self.room_name, message)
-        
-        await self.channel_layer.group_send(
+        if data.get("type") == "file":
+            await self.channel_layer.group_send(
             self.room_group_name,
             {
-                'type': 'chat_message',
-                'message': message,
-                'sender': user.username
+                'type': 'chat_file',
+                'filename': data['filename'],
+                'mimetype': data['mimetype'],
+                'data': data['data'],
+                'sender': user.username,
             }
         )
+            
+        async def chat_file(self, event):
+            await self.send(text_data=json.dumps({
+                'type': 'file',
+                'sender': event['sender'],
+                'filename': event['filename'],
+                'mimetype': event['mimetype'],
+                'data': event['data'],
+            }))
+                
+        if data.get('type') == "text": 
+            message = data['message']
 
-    async def chat_message(self, event):
-        await self.send(
-            text_data=json.dumps(
+            # Save the message in the DB
+            await save_message(user, self.room_name, message)
+            
+            await self.channel_layer.group_send(
+                self.room_group_name,
                 {
-                    'message': event['message'],
-                    'sender': event['sender']
+                    'type': 'chat_message',
+                    'message': message,
+                    'sender': user.username
                 }
             )
-        )
+
+        async def chat_message(self, event):
+            await self.send(
+                text_data=json.dumps(
+                    {
+                        'message': event['message'],
+                        'sender': event['sender']
+                    }
+                )
+            )
     
     async def disconnect(self, close_code):
         await self.channel_layer.group_discard(
