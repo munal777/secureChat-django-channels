@@ -1281,16 +1281,17 @@
          const messageInput = document.getElementById('message-input');
          const sendButton = document.getElementById('send-button');
 
-               // Chat history from Django context
-               const chatHistory = [
-      {% for message in messages %}
-          {
-              sender: "{{ message.sender.username }}",
-              message: "{{ message.content|escapejs }}",
-              timestamp: "{{ message.timestamp|date:'c' }}"
-          }{% if not forloop.last %},{% endif %}
-      {% endfor %}
-      ];
+        // Chat history from Django context
+        const chatHistory = [
+        {% for message in messages %}
+            {
+                sender: "{{ message.sender.username|escapejs }}",
+                message: "{{ message.content|escapejs }}",
+                timestamp: "{{ message.timestamp|date:'c' }}"
+            }{% if not forloop.last %},{% endif %}
+        {% endfor %}
+        ];
+
 
          // Remove empty state when first message arrives
          function removeEmptyState() {
