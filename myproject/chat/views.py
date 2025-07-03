@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model
 from .utils import make_room_name
+from .models import Message
 
 User = get_user_model()
 
@@ -15,17 +16,20 @@ def chat_view(request, room_name):
         try:
             user = User.objects.get(id=int(member_id))
 
-            members_list.append(user.username)            
+            if not user.id == request.user.id:
+                members_list.append(user.username)            
 
         except User.DoesNotExist:
             return redirect('dashboard')
     
     members_name = " & ".join(members_list)
-        
 
+    messages = Message.objects.filter(room_name=room_name).order_by("timestamp")
+        
     return render(request, 'chat.html', {
         'room_name': room_name,
         'room_member': members_name,
+        'messages': messages,
     })
 
 
@@ -38,7 +42,7 @@ def dashboard_view(request):
         {
             "username": user.username,
             "room_name": make_room_name(current_user.id, user.id),
-            "room_member": f"{current_user.username} {user.username}"
+            # "room_member": f"{current_user.username} {user.username}"
         }
         for user in users
     ]
