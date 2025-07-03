@@ -101,14 +101,6 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
             }
         )
             
-        async def chat_file(self, event):
-            await self.send(text_data=json.dumps({
-                'type': 'file',
-                'sender': event['sender'],
-                'filename': event['filename'],
-                'mimetype': event['mimetype'],
-                'data': event['data'],
-            }))
                 
         if data.get('type') == "text": 
             message = data['message']
@@ -124,16 +116,25 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
                     'sender': user.username
                 }
             )
+        
+    async def chat_file(self, event):
+        await self.send(text_data=json.dumps({
+            'type': 'file',
+            'sender': event['sender'],
+            'filename': event['filename'],
+            'mimetype': event['mimetype'],
+            'data': event['data'],
+        }))
 
-        async def chat_message(self, event):
-            await self.send(
-                text_data=json.dumps(
-                    {
-                        'message': event['message'],
-                        'sender': event['sender']
-                    }
-                )
+    async def chat_message(self, event):
+        await self.send(
+            text_data=json.dumps(
+                {
+                    'message': event['message'],
+                    'sender': event['sender']
+                }
             )
+        )
     
     async def disconnect(self, close_code):
         await self.channel_layer.group_discard(

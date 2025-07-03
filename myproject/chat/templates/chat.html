@@ -601,6 +601,13 @@
             placeholder="Type your message..."
             autocomplete="off"
           />
+          <input
+            type="file"
+            id="file-input"
+            accept="image/*,video/*,.pdf,.doc,.docx,.txt,.zip,.rar"
+            style="display: none;"
+          />
+          <button id="file-button" class="file-button">📎</button>
           <button id="send-button" class="send-button">➤</button>
         </div>
       </div>
@@ -616,6 +623,8 @@
          const chatMessages = document.getElementById('chat-messages');
          const messageInput = document.getElementById('message-input');
          const sendButton = document.getElementById('send-button');
+         const fileInput = document.getElementById('file-input');
+         const fileButton = document.getElementById('file-button');
 
         // Chat history from Django context
         const chatHistory = [
@@ -676,7 +685,87 @@
              return separator;
          }
 
-         // Create message element
+          // Format file size
+         function formatFileSize(bytes) {
+             if (bytes === 0) return '0 Bytes';
+             const k = 1024;
+             const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+             const i = Math.floor(Math.log(bytes) / Math.log(k));
+             return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+         }
+
+          // Get file icon based on file type
+         function getFileIcon(mimetype) {
+             if (mimetype.startsWith('image/')) return '🖼️';
+             if (mimetype.startsWith('video/')) return '🎥';
+             if (mimetype.startsWith('audio/')) return '🎵';
+             if (mimetype.includes('pdf')) return '📄';
+             if (mimetype.includes('word') || mimetype.includes('document')) return '📝';
+             if (mimetype.includes('excel') || mimetype.includes('spreadsheet')) return '📊';
+             if (mimetype.includes('zip') || mimetype.includes('rar')) return '📦';
+             return '📁';
+         }
+
+         // Create file message element
+         function createFileMessage(sender, filename, mimetype, data, timestamp = null, isOwnMessage = null) {
+             removeEmptyState();
+
+             // Auto-detect if it's own message if not specified
+             if (isOwnMessage === null) {
+                 isOwnMessage = sender === currentUser;
+             }
+
+             const messageEl = document.createElement('div');
+             messageEl.className = `message ${isOwnMessage ? 'own' : ''}`;
+
+             const avatarLetter = sender.charAt(0).toUpperCase();
+             const time = formatTime(timestamp);
+             const displaySender = isOwnMessage ? 'You' : sender;
+             const fileIcon = getFileIcon(mimetype);
+
+             let fileContent = '';
+             
+             if (mimetype.startsWith('image/')) {
+                 fileContent = `
+                     <div class="file-preview">
+                         <img src="data:${mimetype};base64,${data}" alt="${filename}" style="max-width: 300px; max-height: 200px; border-radius: 8px;">
+                     </div>
+                 `;
+             } else if (mimetype.startsWith('video/')) {
+                 fileContent = `
+                     <div class="file-preview">
+                         <video controls style="max-width: 300px; max-height: 200px; border-radius: 8px;">
+                             <source src="data:${mimetype};base64,${data}" type="${mimetype}">
+                             Your browser does not support the video tag.
+                         </video>
+                     </div>
+                 `;
+             } else {
+                 fileContent = `
+                     <div class="file-attachment">
+                         <div class="file-icon">${fileIcon}</div>
+                         <div class="file-info">
+                             <div class="file-name">${filename}</div>
+                             <div class="file-size">${formatFileSize(atob(data).length)}</div>
+                         </div>
+                         <a href="data:${mimetype};base64,${data}" download="${filename}" class="file-download">⬇️</a>
+                     </div>
+                 `;
+             }
+
+             messageEl.innerHTML = `
+                 <div class="message-avatar">${avatarLetter}</div>
+                 <div class="message-content">
+                     <div class="message-sender">${displaySender}</div>
+                     ${fileContent}
+                     <div class="message-time">${time}</div>
+                 </div>
+             `;
+
+             return messageEl;
+         }
+
+         // Create text message element
          function createMessage(sender, message, timestamp = null, isOwnMessage = null) {
              removeEmptyState();
 
@@ -750,25 +839,81 @@
 
          let lastSentMessage = null; // Track last sent message to prevent duplicates
 
+         // Handle file input change
+         fileInput.addEventListener('change', function(e) {
+             const file = e.target.files[0];
+             if (file) {
+                 // Check file size (limit to 10MB)
+                 if (file.size > 10 * 1024 * 1024) {
+                     alert('File size too large. Maximum 10MB allowed.');
+                     return;
+                 }
+
+                 const reader = new FileReader();
+                 reader.onload = function(e) {
+                     const base64Data = e.target.result.split(',')[1]; // Remove data:mime;base64, prefix
+                     
+                     // Add file message to UI immediately
+                     const messageEl = createFileMessage(currentUser, file.name, file.type, base64Data);
+                     chatMessages.appendChild(messageEl);
+                     scrollToBottom();
+
+                     // Send file to WebSocket
+                     chatSocket.send(JSON.stringify({
+                         'type': 'file',
+                         'filename': file.name,
+                         'mimetype': file.type,
+                         'data': base64Data
+                     }));
+                 };
+                 reader.readAsDataURL(file);
+             }
+             // Clear the file input
+             fileInput.value = '';
+         });
+
+         // File button click handler
+         fileButton.addEventListener('click', function() {
+             fileInput.click();
+         });
+
+
          // On receiving message
          chatSocket.onmessage = function(e) {
              const data = JSON.parse(e.data);
-             const message = data.message;
-             const sender = data.sender;
 
-             // Check if this is our own message coming back from server
-             const isOwnMessage = sender === currentUser;
+             if (data.type === 'file') {
+                // Handle file message
+                const sender = data.sender;
+                const isOwnMessage = sender === currentUser;
+                
+                // Skip if this is our own file (already displayed)
+                if (isOwnMessage) {
+                    return;
+                }
+                
+                const messageEl = createFileMessage(sender, data.filename, data.mimetype, data.data);
+                chatMessages.appendChild(messageEl);
+                scrollToBottom();
+             } else {
+                const message = data.message;
+                const sender = data.sender;
 
-             // Skip if this is a duplicate of the last message we sent
-             if (isOwnMessage && lastSentMessage &&
-                 lastSentMessage.message === message &&
-                 Date.now() - lastSentMessage.timestamp < 2000) {
-                 return; // Don't display duplicate
+                // Check if this is our own message coming back from server
+                const isOwnMessage = sender === currentUser;
+
+                // Skip if this is a duplicate of the last message we sent
+                if (isOwnMessage && lastSentMessage &&
+                    lastSentMessage.message === message &&
+                    Date.now() - lastSentMessage.timestamp < 2000) {
+                    return; // Don't display duplicate
+                }
+
+                const messageEl = createMessage(sender, message);
+                chatMessages.appendChild(messageEl);
+                scrollToBottom();
              }
-
-             const messageEl = createMessage(sender, message);
-             chatMessages.appendChild(messageEl);
-             scrollToBottom();
+             
          };
 
          // On sending message
