@@ -565,6 +565,285 @@
           font-size: 14px;
         }
       }
+
+      /* File content styling - Add these styles to your existing CSS */
+
+      /* File preview container */
+      .file-preview {
+        margin: 8px 0;
+        border-radius: 12px;
+        overflow: hidden;
+        background: rgba(0, 0, 0, 0.02);
+        border: 1px solid rgba(0, 0, 0, 0.05);
+      }
+
+      .message.own .file-preview {
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+      }
+
+      /* Image preview styling */
+      .file-preview img {
+        width: 100%;
+        height: auto;
+        max-width: 280px;
+        max-height: 200px;
+        object-fit: cover;
+        display: block;
+        border-radius: 12px;
+        transition: transform 0.2s ease;
+        cursor: pointer;
+      }
+
+      .file-preview img:hover {
+        transform: scale(1.02);
+      }
+
+      /* Video preview styling */
+      .file-preview video {
+        width: 100%;
+        height: auto;
+        max-width: 280px;
+        max-height: 200px;
+        border-radius: 12px;
+        background: #000;
+      }
+
+      /* File attachment styling */
+      .file-attachment {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px;
+        background: rgba(248, 249, 250, 0.8);
+        border-radius: 12px;
+        border: 1px solid rgba(0, 0, 0, 0.06);
+        margin: 8px 0;
+        transition: all 0.2s ease;
+        min-width: 200px;
+        max-width: 300px;
+      }
+
+      .message.own .file-attachment {
+        background: rgba(255, 255, 255, 0.15);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+      }
+
+      .file-attachment:hover {
+        background: rgba(248, 249, 250, 1);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      }
+
+      .message.own .file-attachment:hover {
+        background: rgba(255, 255, 255, 0.2);
+      }
+
+      /* File icon styling */
+      .file-icon {
+        font-size: 24px;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(46, 204, 113, 0.1);
+        border-radius: 8px;
+        flex-shrink: 0;
+      }
+
+      .message.own .file-icon {
+        background: rgba(255, 255, 255, 0.2);
+      }
+
+      /* File info styling */
+      .file-info {
+        flex: 1;
+        min-width: 0;
+      }
+
+      .file-name {
+        font-size: 14px;
+        font-weight: 600;
+        color: #2c3e50;
+        margin-bottom: 2px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .message.own .file-name {
+        color: rgba(255, 255, 255, 0.95);
+      }
+
+      .file-size {
+        font-size: 12px;
+        color: #7f8c8d;
+        font-weight: 500;
+      }
+
+      .message.own .file-size {
+        color: rgba(255, 255, 255, 0.7);
+      }
+
+      /* File download button styling */
+      .file-download {
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(46, 204, 113, 0.1);
+        border-radius: 8px;
+        text-decoration: none;
+        font-size: 14px;
+        transition: all 0.2s ease;
+        flex-shrink: 0;
+        color: #2ecc71;
+      }
+
+      .message.own .file-download {
+        background: rgba(255, 255, 255, 0.2);
+        color: rgba(255, 255, 255, 0.9);
+      }
+
+      .file-download:hover {
+        background: rgba(46, 204, 113, 0.2);
+        transform: scale(1.1);
+      }
+
+      .message.own .file-download:hover {
+        background: rgba(255, 255, 255, 0.3);
+      }
+
+      /* File button styling (attach button) */
+      .file-button {
+        width: 40px;
+        height: 40px;
+        border: none;
+        background: rgba(46, 204, 113, 0.1);
+        color: #2ecc71;
+        border-radius: 50%;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+        font-size: 16px;
+        flex-shrink: 0;
+      }
+
+      .file-button:hover {
+        background: rgba(46, 204, 113, 0.2);
+        transform: scale(1.05);
+      }
+
+      .file-button:active {
+        transform: scale(0.95);
+      }
+
+      /* Image modal for full-size viewing */
+      .image-modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.8);
+        backdrop-filter: blur(10px);
+      }
+
+      .image-modal.active {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        animation: fadeIn 0.3s ease;
+      }
+
+      @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+      }
+
+      .image-modal img {
+        max-width: 90%;
+        max-height: 90%;
+        object-fit: contain;
+        border-radius: 12px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+      }
+
+      .image-modal-close {
+        position: absolute;
+        top: 20px;
+        right: 30px;
+        font-size: 30px;
+        color: white;
+        cursor: pointer;
+        background: rgba(0, 0, 0, 0.5);
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+      }
+
+      .image-modal-close:hover {
+        background: rgba(0, 0, 0, 0.8);
+        transform: scale(1.1);
+      }
+
+      /* Mobile responsive adjustments */
+      @media (max-width: 768px) {
+        .file-preview img,
+        .file-preview video {
+          max-width: 220px;
+          max-height: 160px;
+        }
+        
+        .file-attachment {
+          max-width: 250px;
+          min-width: 180px;
+        }
+        
+        .file-name {
+          font-size: 13px;
+        }
+        
+        .file-size {
+          font-size: 11px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .file-preview img,
+        .file-preview video {
+          max-width: 200px;
+          max-height: 140px;
+        }
+        
+        .file-attachment {
+          max-width: 220px;
+          min-width: 160px;
+          padding: 10px;
+        }
+        
+        .file-icon {
+          font-size: 20px;
+          width: 36px;
+          height: 36px;
+        }
+        
+        .file-download {
+          width: 28px;
+          height: 28px;
+          font-size: 12px;
+        }
+      }
     </style>
   </head>
   <body>
@@ -694,17 +973,68 @@
              return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
          }
 
-          // Get file icon based on file type
-         function getFileIcon(mimetype) {
-             if (mimetype.startsWith('image/')) return '🖼️';
-             if (mimetype.startsWith('video/')) return '🎥';
-             if (mimetype.startsWith('audio/')) return '🎵';
-             if (mimetype.includes('pdf')) return '📄';
-             if (mimetype.includes('word') || mimetype.includes('document')) return '📝';
-             if (mimetype.includes('excel') || mimetype.includes('spreadsheet')) return '📊';
-             if (mimetype.includes('zip') || mimetype.includes('rar')) return '📦';
-             return '📁';
-         }
+          
+        // Enhanced file icon function with more file types
+        function getFileIcon(mimetype) {
+            if (mimetype.startsWith('image/')) return '🖼️';
+            if (mimetype.startsWith('video/')) return '🎥';
+            if (mimetype.startsWith('audio/')) return '🎵';
+            if (mimetype.includes('pdf')) return '📄';
+            if (mimetype.includes('word') || mimetype.includes('document')) return '📝';
+            if (mimetype.includes('excel') || mimetype.includes('spreadsheet')) return '📊';
+            if (mimetype.includes('powerpoint') || mimetype.includes('presentation')) return '📊';
+            if (mimetype.includes('zip') || mimetype.includes('rar') || mimetype.includes('7z')) return '📦';
+            if (mimetype.includes('text/')) return '📃';
+            if (mimetype.includes('json') || mimetype.includes('xml')) return '⚙️';
+            return '📁';
+        }
+
+         // Function to open image in modal
+        function openImageModal(imageSrc, filename) {
+            let modal = document.getElementById('imageModal');
+            if (!modal) {
+                // Create modal if it doesn't exist
+                modal = document.createElement('div');
+                modal.id = 'imageModal';
+                modal.className = 'image-modal';
+                modal.innerHTML = `
+                    <span class="image-modal-close" onclick="closeImageModal()">×</span>
+                    <img id="modalImage" src="" alt="">
+                `;
+                document.body.appendChild(modal);
+                
+                // Close modal when clicking outside the image
+                modal.addEventListener('click', function(e) {
+                    if (e.target === modal) {
+                        closeImageModal();
+                    }
+                });
+            }
+            
+            const modalImage = document.getElementById('modalImage');
+            modalImage.src = imageSrc;
+            modalImage.alt = filename;
+            modal.classList.add('active');
+            
+            // Prevent body scroll when modal is open
+            document.body.style.overflow = 'hidden';
+        }
+
+        // Function to close image modal
+        function closeImageModal() {
+            const modal = document.getElementById('imageModal');
+            if (modal) {
+                modal.classList.remove('active');
+                document.body.style.overflow = 'auto';
+            }
+        }
+
+        // Add keyboard support for closing modal
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeImageModal();
+            }
+        });
 
          // Create file message element
          function createFileMessage(sender, filename, mimetype, data, timestamp = null, isOwnMessage = null) {
@@ -722,33 +1052,48 @@
              const time = formatTime(timestamp);
              const displaySender = isOwnMessage ? 'You' : sender;
              const fileIcon = getFileIcon(mimetype);
+             const fileSize = formatFileSize(atob(data).length);
 
              let fileContent = '';
              
              if (mimetype.startsWith('image/')) {
                  fileContent = `
-                     <div class="file-preview">
-                         <img src="data:${mimetype};base64,${data}" alt="${filename}" style="max-width: 300px; max-height: 200px; border-radius: 8px;">
-                     </div>
+                      <div class="file-preview">
+                         <img src="data:${mimetype};base64,${data}"
+                              alt="${filename}"
+                              onclick="openImageModal(this.src, '${filename}')"
+                              title="Click to view full size">
+                      </div>
+                      <div class="file-info" style="padding: 4px 0;">
+                        <div class="file-name">${filename}</div>
+                        <div class="file-size">${fileSize}</div>
+                      </div>
                  `;
              } else if (mimetype.startsWith('video/')) {
                  fileContent = `
-                     <div class="file-preview">
-                         <video controls style="max-width: 300px; max-height: 200px; border-radius: 8px;">
+                      <div class="file-preview">
+                         <video controls preload="metadata">
                              <source src="data:${mimetype};base64,${data}" type="${mimetype}">
                              Your browser does not support the video tag.
                          </video>
-                     </div>
+                      </div>
+                      <div class="file-info" style="padding: 4px 0;">
+                          <div class="file-name">${filename}</div>
+                          <div class="file-size">${fileSize}</div>
+                      </div>
                  `;
              } else {
                  fileContent = `
                      <div class="file-attachment">
                          <div class="file-icon">${fileIcon}</div>
                          <div class="file-info">
-                             <div class="file-name">${filename}</div>
-                             <div class="file-size">${formatFileSize(atob(data).length)}</div>
+                             <div class="file-name" title="${filename}">${filename}</div>
+                             <div class="file-size">${fileSize}</div>
                          </div>
-                         <a href="data:${mimetype};base64,${data}" download="${filename}" class="file-download">⬇️</a>
+                         <a href="data:${mimetype};base64,${data}" 
+                            download="${filename}" 
+                            class="file-download"
+                            title="Download file">⬇️</a>
                      </div>
                  `;
              }
