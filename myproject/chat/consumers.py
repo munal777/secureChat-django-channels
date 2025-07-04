@@ -99,7 +99,19 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
                 'data': data['data'],
                 'sender': user.username,
             }
-        )
+            )
+            
+        if data.get("type") == "voice":
+            await self.channel_layer.group_send(
+            self.room_group_name,
+            {
+                'type': 'voice_message',
+                'filename': data['filename'],
+                'mimetype': data['mimetype'],
+                'data': data['data'],
+                'sender': user.username,
+            }
+            )
             
                 
         if data.get('type') == "text": 
@@ -120,6 +132,15 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
     async def chat_file(self, event):
         await self.send(text_data=json.dumps({
             'type': 'file',
+            'sender': event['sender'],
+            'filename': event['filename'],
+            'mimetype': event['mimetype'],
+            'data': event['data'],
+        }))
+
+    async def voice_message(self, event):
+        await self.send(text_data=json.dumps({
+            'type': 'voice',
             'sender': event['sender'],
             'filename': event['filename'],
             'mimetype': event['mimetype'],
