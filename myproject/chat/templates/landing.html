@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SecureChat - Django Learning Project</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #0a0a0a;
+            color: white;
+            overflow-x: hidden;
+        }
+
+        .hero {
+            min-height: 100vh;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: radial-gradient(circle at 30% 20%, rgba(46, 204, 113, 0.3) 0%, transparent 50%),
+                        radial-gradient(circle at 70% 80%, rgba(46, 204, 113, 0.2) 0%, transparent 50%),
+                        radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.03) 0%, transparent 50%),
+                        linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                radial-gradient(circle at 25% 25%, #2ecc71 1px, transparent 1px),
+                radial-gradient(circle at 75% 75%, #2ecc71 1px, transparent 1px);
+            background-size: 50px 50px;
+            opacity: 0.1;
+            animation: gridMove 20s linear infinite;
+        }
+
+        @keyframes gridMove {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(50px, 50px); }
+        }
+
+        .floating-elements {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .floating-element {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: #2ecc71;
+            border-radius: 50%;
+            animation: float 15s ease-in-out infinite;
+        }
+
+        .floating-element:nth-child(1) { top: 20%; left: 10%; animation-delay: 0s; }
+        .floating-element:nth-child(2) { top: 60%; left: 20%; animation-delay: 2s; }
+        .floating-element:nth-child(3) { top: 40%; left: 80%; animation-delay: 4s; }
+        .floating-element:nth-child(4) { top: 80%; left: 70%; animation-delay: 6s; }
+        .floating-element:nth-child(5) { top: 10%; left: 60%; animation-delay: 8s; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) scale(1); opacity: 0.7; }
+            50% { transform: translateY(-30px) scale(1.2); opacity: 1; }
+        }
+
+        .hero-content {
+            text-align: center;
+            z-index: 10;
+            position: relative;
+            max-width: 1000px;
+            padding: 0 2rem;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .hero-title {
+            font-size: clamp(3rem, 8vw, 7rem);
+            font-weight: 800;
+            line-height: 1.1;
+            margin-top: 2rem;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, #ffffff 0%, #2ecc71 50%, #ffffff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            background-size: 200% 200%;
+            animation: titleGlow 4s ease-in-out infinite, slideUp 1s ease-out 0.3s both;
+        }
+
+        @keyframes titleGlow {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .hero-subtitle {
+            font-size: clamp(1.2rem, 3vw, 2rem);
+            font-weight: 300;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 3rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.4;
+            animation: slideUp 1s ease-out 0.6s both;
+        }
+
+        .hero-features {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 3rem;
+            flex-wrap: wrap;
+            animation: slideUp 1s ease-out 0.9s both;
+        }
+
+        .feature-pill {
+            background: rgba(46, 204, 113, 0.1);
+            border: 1px solid rgba(46, 204, 113, 0.3);
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #2ecc71;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-pill::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(46, 204, 113, 0.2), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .feature-pill:hover::before {
+            left: 100%;
+        }
+
+        .feature-pill:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(46, 204, 113, 0.3);
+        }
+
+        .cta-container {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-bottom: 4rem;
+            flex-wrap: wrap;
+            animation: slideUp 1s ease-out 1.2s both;
+        }
+
+        .cta-primary {
+            background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+            color: white;
+            padding: 18px 40px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(46, 204, 113, 0.4);
+        }
+
+        .cta-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.1), transparent);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .cta-primary:hover::before {
+            opacity: 1;
+        }
+
+        .cta-primary:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 50px rgba(46, 204, 113, 0.6);
+        }
+
+        .cta-secondary {
+            background: transparent;
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            padding: 16px 40px;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.4s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .cta-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: #2ecc71;
+            transform: translateY(-3px);
+        }
+
+        .demo-preview {
+            position: relative;
+            max-width: 800px;
+            margin: 0 auto;
+            animation: slideUp 1s ease-out 1.5s both;
+        }
+
+        .chat-mockup {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 20px;
+            backdrop-filter: blur(20px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .chat-mockup::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 40px;
+            background: linear-gradient(90deg, #2ecc71, #27ae60);
+            border-radius: 20px 20px 0 0;
+        }
+
+        .chat-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            margin-top: 20px;
+        }
+
+        .chat-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #2ecc71;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .chat-dot:nth-child(2) { animation-delay: 0.2s; }
+        .chat-dot:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.4; }
+            50% { opacity: 1; }
+        }
+
+        .chat-messages {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            min-height: 200px;
+        }
+
+        .message {
+            max-width: 70%;
+            padding: 12px 18px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            animation: messageSlide 0.6s ease-out;
+        }
+
+        .message.sent {
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            align-self: flex-end;
+            color: white;
+        }
+
+        .message.received {
+            background: rgba(255, 255, 255, 0.1);
+            align-self: flex-start;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        @keyframes messageSlide {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .message-input {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            align-items: center;
+        }
+
+        .input-field {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 25px;
+            padding: 12px 20px;
+            color: white;
+            font-size: 0.9rem;
+        }
+
+        .input-field::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .send-btn {
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.8rem;
+            animation: bounce 2s ease-in-out infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(-10px); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .hero-content {
+                padding: 0 1rem;
+            }
+            
+            .hero-features {
+                gap: 1rem;
+            }
+            
+            .cta-container {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .cta-primary, .cta-secondary {
+                width: 100%;
+                max-width: 300px;
+                justify-content: center;
+            }
+        }
+
+        /* Sections below hero */
+        .section {
+            padding: 100px 0;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding-left: 2rem;
+            padding-right: 2rem;
+        }
+
+        .features-section {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+        }
+
+        .tech-section {
+            background: #0a0a0a;
+        }
+
+        .register-section {
+            background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%);
+        }
+
+        /* Simple styles for other sections */
+        .section h2 {
+            font-size: 3rem;
+            text-align: center;
+            margin-bottom: 3rem;
+            background: linear-gradient(135deg, #ffffff 0%, #2ecc71 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .feature-card {
+            background: rgba(46, 204, 113, 0.1);
+            border: 1px solid rgba(46, 204, 113, 0.3);
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(46, 204, 113, 0.2);
+        }
+
+        .tech-tags {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .tech-tag {
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .tech-tag:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(46, 204, 113, 0.3);
+        }
+
+        .register-cta {
+            text-align: center;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .register-description {
+            font-size: 1.3rem;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 3rem;
+            line-height: 1.6;
+        }
+
+        .register-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+            flex-wrap: wrap;
+        }
+
+        .register-btn-primary {
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            color: white;
+            padding: 20px 50px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.3rem;
+            font-weight: 700;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 15px 40px rgba(46, 204, 113, 0.4);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .register-btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.2), transparent);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .register-btn-primary:hover::before {
+            opacity: 1;
+        }
+
+        .register-btn-primary:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 25px 60px rgba(46, 204, 113, 0.6);
+        }
+
+        .register-btn-secondary {
+            background: transparent;
+            color: rgba(255, 255, 255, 0.9);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            padding: 18px 40px;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.4s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .register-btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: #2ecc71;
+            color: #2ecc71;
+            transform: translateY(-3px);
+        }
+
+        .btn-icon {
+            font-size: 1.2em;
+            animation: bounce 2s ease-in-out infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-3px); }
+        }
+
+        .register-features {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+            margin-top: 2rem;
+        }
+
+        .mini-feature {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .mini-icon {
+            font-size: 1.2rem;
+            color: #2ecc71;
+        }
+
+        @media (max-width: 768px) {
+            .register-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .register-btn-primary, .register-btn-secondary {
+                width: 100%;
+                max-width: 300px;
+                justify-content: center;
+            }
+            
+            .register-features {
+                flex-direction: column;
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <section class="hero">
+        <div class="floating-elements">
+            <div class="floating-element"></div>
+            <div class="floating-element"></div>
+            <div class="floating-element"></div>
+            <div class="floating-element"></div>
+            <div class="floating-element"></div>
+        </div>
+        
+        <div class="hero-content">
+            
+            <h1 class="hero-title">SecureChat</h1>
+            
+            <p class="hero-subtitle">
+                Experience the future of secure messaging with encrypted conversations, 
+                multimedia sharing, and real-time communication.
+            </p>
+            
+            <div class="hero-features">
+                <div class="feature-pill">🔐 Encrypted Messages</div>
+                <div class="feature-pill">🎤 Voice & Video</div>
+                <div class="feature-pill">📁 File Sharing</div>
+                <div class="feature-pill">⚡ Real-time</div>
+            </div>
+            
+            <div class="cta-container">
+                <a href="#register" class="cta-primary">
+                    Start Chatting
+                    <span>→</span>
+                </a>
+                <a href="#features" class="cta-secondary">
+                    Learn More
+                    <span>↓</span>
+                </a>
+            </div>
+            
+            <div class="demo-preview">
+                <div class="chat-mockup">
+                    <div class="chat-header">
+                        <div class="chat-dot"></div>
+                        <div class="chat-dot"></div>
+                        <div class="chat-dot"></div>
+                        <span style="margin-left: 10px; font-size: 0.9rem; color: rgba(255,255,255,0.8);">SecureChat Demo</span>
+                    </div>
+                    <div class="chat-messages">
+                        <div class="message received">Welcome to SecureChat! 👋</div>
+                        <div class="message sent">This looks amazing! 🔥</div>
+                        <div class="message received">All messages are encrypted 🔐</div>
+                        <div class="message sent">Can I share files too? 📁</div>
+                        <div class="message received">Yes! Images, videos, voice messages and more! 🎉</div>
+                    </div>
+                    <div class="message-input">
+                        <input type="text" class="input-field" placeholder="Type your message..." />
+                        <button class="send-btn">→</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="scroll-indicator">
+            Scroll to explore ↓
+        </div>
+    </section>
+
+    <section class="section features-section" id="features">
+        <h2>Powerful Features</h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <h3>🔐 End-to-End Encryption</h3>
+                <p>All text messages are encrypted before storage, ensuring your conversations stay private.</p>
+            </div>
+            <div class="feature-card">
+                <h3>🎤 Voice Messages</h3>
+                <p>Record and share voice messages for more personal communication.</p>
+            </div>
+            <div class="feature-card">
+                <h3>📁 File Sharing</h3>
+                <p>Share documents, images, and videos seamlessly within conversations.</p>
+            </div>
+            <div class="feature-card">
+                <h3>⚡ Real-time Chat</h3>
+                <p>Built with Django for fast, reliable real-time messaging experience.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="section tech-section">
+        <h2>Built With Django</h2>
+        <p style="text-align: center; font-size: 1.2rem; margin-bottom: 2rem; color: rgba(255,255,255,0.8);">
+            Created as a comprehensive learning project to master Django development
+        </p>
+        <div class="tech-tags">
+            <span class="tech-tag">Django</span>
+            <span class="tech-tag">Python</span>
+            <span class="tech-tag">SQLite</span>
+            <span class="tech-tag">HTML5</span>
+            <span class="tech-tag">CSS3</span>
+            <span class="tech-tag">JavaScript</span>
+            <span class="tech-tag">Bootstrap</span>
+            <span class="tech-tag">Encryption</span>
+        </div>
+    </section>
+
+    <section class="section register-section" id="register">
+        <h2>Ready to Start Chatting?</h2>
+        <div class="register-cta">
+            <p class="register-description">
+                Join thousands of users already using SecureChat for safe, encrypted messaging with multimedia support.
+            </p>
+            <div class="register-buttons">
+                <a href="{% url 'register' %}" class="register-btn-primary">
+                    <span class="btn-icon">🚀</span>
+                    Join Us Now
+                </a>
+                <a href="{% url 'login' %}" class="register-btn-secondary">
+                    <span class="btn-icon">👋</span>
+                    Already have an account?
+                </a>
+            </div>
+            <div class="register-features">
+                <div class="mini-feature">
+                    <span class="mini-icon">⚡</span>
+                    <span>Instant Setup</span>
+                </div>
+                <div class="mini-feature">
+                    <span class="mini-icon">🔒</span>
+                    <span>100% Secure</span>
+                </div>
+                <div class="mini-feature">
+                    <span class="mini-icon">🎉</span>
+                    <span>Free to Use</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Smooth scrolling for navigation
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // Typing animation for demo messages
+        const messages = document.querySelectorAll('.message');
+        messages.forEach((message, index) => {
+            message.style.opacity = '0';
+            message.style.transform = 'translateY(20px)';
+            setTimeout(() => {
+                message.style.transition = 'all 0.6s ease';
+                message.style.opacity = '1';
+                message.style.transform = 'translateY(0)';
+            }, index * 1000 + 2000);
+        });
+
+        // Parallax effect for floating elements
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const floating = document.querySelectorAll('.floating-element');
+            floating.forEach((element, index) => {
+                const speed = (index + 1) * 0.1;
+                element.style.transform = `translateY(${scrolled * speed}px)`;
+            });
+        });
+
+        // Add interactive demo input
+        const demoInput = document.querySelector('.input-field');
+        const demoSendBtn = document.querySelector('.send-btn');
+        
+        demoSendBtn.addEventListener('click', () => {
+            if (demoInput.value.trim()) {
+                const messagesContainer = document.querySelector('.chat-messages');
+                const newMessage = document.createElement('div');
+                newMessage.className = 'message sent';
+                newMessage.textContent = demoInput.value;
+                messagesContainer.appendChild(newMessage);
+                demoInput.value = '';
+                
+                // Auto-scroll to bottom
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }
+        });
+
+        demoInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                demoSendBtn.click();
+            }
+        });
+    </script>
+</body>
+</html>
