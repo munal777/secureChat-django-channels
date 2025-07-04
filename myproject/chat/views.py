@@ -50,3 +50,8 @@ def dashboard_view(request):
     return render(request, "dashboard.html", {
         "user_rooms": user_rooms
     })
+
+
+
+def landing_page_view(request):
+    return render(request, 'landing.html')
