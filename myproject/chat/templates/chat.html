@@ -1134,7 +1134,7 @@
          const roomName = "{{ room_name }}";
          const currentUser = "{{ request.user.username }}"; // Get current user from Django
          const chatSocket = new WebSocket(
-             'ws://' + window.location.host + '/ws/chat/' + roomName + '/'
+             'ws://' + window.location.host + '/ws/chat/private/' + roomName + '/'
          );
 
          const chatMessages = document.getElementById('chat-messages');

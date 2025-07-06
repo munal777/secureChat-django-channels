@@ -96,3 +96,10 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
             self.room_group_name,
             self.channel_name
         )
+
+
+class GroupChatConsumer(AsyncWebsocketConsumer):
+
+
+    def connect(self):
+        self
