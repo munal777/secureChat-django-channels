@@ -1,8 +1,9 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model
+
 from .utils import make_room_name, decrypt_message
-from .models import Message
+from .models import Message, ChatRoom
 
 User = get_user_model()
 
@@ -69,3 +70,17 @@ def dashboard_view(request):
 
 def landing_page_view(request):
     return render(request, 'landing.html')
+
+
+@login_required
+def create_group_view(request):
+    if request.method == "POST":
+        group_name = request.POST["room_name"]
+        member_ids = request.POST.getlist("members")
+
+        room = ChatRoom.objects.create(name=group_name, is_group=True)
+        room.members.set(User.objects.filter(id__in = member_ids))
+        room.members.add(request.user)
+        room.save()
+
+        return render("chat_room", room_name=room.name)
