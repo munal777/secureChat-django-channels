@@ -102,4 +102,4 @@ class GroupChatConsumer(AsyncWebsocketConsumer):
 
 
     def connect(self):
-        self
+        self.room_name = self.scope['url_route']['kwargs']['room_name']
