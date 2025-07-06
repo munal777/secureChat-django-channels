@@ -5,7 +5,8 @@ from cryptography.fernet import Fernet
 
 @database_sync_to_async
 def save_message(user, room_name, message):
-    Message.objects.create(sender=user, room_name=room_name, content=message)
+    encrypted_msg = encrypt_message(message)
+    Message.objects.create(sender=user, room_name=room_name, content=encrypted_msg)
 
 
 def make_room_name(id1, id2):
