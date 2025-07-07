@@ -1,5 +1,8 @@
 from channels.generic.websocket import AsyncWebsocketConsumer
+from channels.db import database_sync_to_async
+
 from .utils import save_message, decrypt_message
+from .models import ChatRoom
 import json
 
 class PrivateChatConsumer(AsyncWebsocketConsumer):
@@ -101,5 +104,26 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
 class GroupChatConsumer(AsyncWebsocketConsumer):
 
 
-    def connect(self):
+    async def connect(self):
         self.room_name = self.scope['url_route']['kwargs']['room_name']
+        self.room_group_name = f'chat_{self.room_name}'
+        self.user = self.scope['user']
+
+        try:
+            room = await database_sync_to_async(ChatRoom.objects.get)(name=self.room_name)
+            is_member = await database_sync_to_async(room.members.filter(id=self.user.id).exists)()
+
+            if not is_member:
+                await self.close()
+                return
+        except ChatRoom.DoesNotExist:
+            await self.close()
+            return
+        
+
+        await self.channel_layer.group_add(
+            self.room_group_name,
+            self.channel_name
+        )
+
+        await self.accept()
