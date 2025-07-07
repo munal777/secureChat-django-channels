@@ -26,6 +26,7 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
         data= json.loads(text_data)
         user = self.scope["user"]
 
+
         if data.get("type") == "file":
             await self.channel_layer.group_send(
             self.room_group_name,
@@ -127,3 +128,83 @@ class GroupChatConsumer(AsyncWebsocketConsumer):
         )
 
         await self.accept()
+    
+
+    async def receive(self, text_data):
+        data= json.loads(text_data)
+        user = self.scope["user"]
+
+
+        if data.get("type") == "file":
+            await self.channel_layer.group_send(
+            self.room_group_name,
+            {
+                'type': 'chat_file',
+                'filename': data['filename'],
+                'mimetype': data['mimetype'],
+                'data': data['data'],
+                'sender': user.username,
+            }
+            )
+            
+        if data.get("type") == "voice":
+            await self.channel_layer.group_send(
+            self.room_group_name,
+            {
+                'type': 'voice_message',
+                'filename': data['filename'],
+                'mimetype': data['mimetype'],
+                'data': data['data'],
+                'sender': user.username,
+            }
+            )
+            
+                
+        if data.get('type') == "text": 
+            message = data['message']
+
+            # Save the message in the DB
+            await save_message(user, self.room_name, message)
+            
+            await self.channel_layer.group_send(
+                self.room_group_name,
+                {
+                    'type': 'chat_message',
+                    'message': message,
+                    'sender': user.username
+                }
+            )
+    
+    async def chat_file(self, event):
+        await self.send(text_data=json.dumps({
+            'type': 'file',
+            'sender': event['sender'],
+            'filename': event['filename'],
+            'mimetype': event['mimetype'],
+            'data': event['data'],
+        }))
+
+    async def voice_message(self, event):
+        await self.send(text_data=json.dumps({
+            'type': 'voice',
+            'sender': event['sender'],
+            'filename': event['filename'],
+            'mimetype': event['mimetype'],
+            'data': event['data'],
+        }))
+
+    async def chat_message(self, event):
+        await self.send(
+            text_data=json.dumps(
+                {
+                    'message': event['message'],
+                    'sender': event['sender']
+                }
+            )
+        )
+    
+    async def disconnect(self, close_code):
+        await self.channel_layer.group_discard(
+            self.room_group_name,
+            self.channel_name
+        )
