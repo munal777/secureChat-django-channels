@@ -1069,10 +1069,13 @@
     <div class="chat-container">
       <div class="chat-header">
         <div class="avatar">
-          <span id="room-avatar">💬</span>
+          <span id="room-avatar">{% if is_group %}👥{% else %}💬{% endif %}</span>
         </div>
         <div class="header-info">
-          <h2 id="room-name">{{ room_member }}</h2>
+          <h2 id="room-name">{% if is_group %} {{ room_name }} {% else %} {{ room_member }} {% endif %}</h2>
+          {% if is_group %}
+            <div class="group-indicator">Group Chat</div>
+          {% endif %}
         </div>
       </div>
 
@@ -1105,6 +1108,45 @@
           <button id="voice-button" class="voice-button">🎤</button>
           <button id="send-button" class="send-button">➤</button>
         </div>
+      </div>
+    </div>
+
+    {% comment %} Group Creation Model {% endcomment %}
+    <div id="groupModal" class="group-modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3>Create New Group</h3>
+          <span class="modal-close" id="closeGroupModal">&times;</span>
+        </div>
+        
+        <form id="groupForm" method="post" action="{% url 'create_group' %}">
+          {% csrf_token %}
+          
+          <div class="form-group">
+            <label for="groupName">Group Name</label>
+            <input type="text" id="groupName" name="room_name" placeholder="Enter group name..." required maxlength="50">
+          </div>
+          
+          <div class="form-group">
+            <label for="memberSearch">Add Members</label>
+            <div class="member-search-container">
+              <input type="text" id="memberSearch" placeholder="Search users..." autocomplete="off">
+              <div id="searchResults" class="search-results"></div>
+            </div>
+          </div>
+          
+          <div class="selected-members">
+            <h4>Selected Members:</h4>
+            <div id="selectedMembersList" class="selected-members-list">
+              <div class="no-members">No members selected</div>
+            </div>
+          </div>
+          
+          <div class="form-actions">
+            <button type="button" id="cancelGroup" class="btn-cancel">Cancel</button>
+            <button type="submit" id="createGroup" class="btn-create" disabled>Create Group</button>
+          </div>
+        </form>
       </div>
     </div>
 
