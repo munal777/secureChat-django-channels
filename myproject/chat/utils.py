@@ -23,3 +23,22 @@ def encrypt_message(plain_text):
 
 def decrypt_message(cipher_text):
     return cipher.decrypt(cipher_text.encode()).decode()
+
+
+
+def decrypted_history_msg(messages):
+    message_contents = []
+
+    for message in messages:
+        try:
+            decrypted_msg = decrypt_message(message.content)
+        except Exception:
+            decrypted_msg = "[Decryption Failed]"
+
+        message_contents.append({
+            "sender": message.sender,
+            "timestamp": message.timestamp,
+            "content": decrypted_msg
+        })
+    
+    return message_contents

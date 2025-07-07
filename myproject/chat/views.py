@@ -2,49 +2,64 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model
 
-from .utils import make_room_name, decrypt_message
+from .utils import make_room_name, decrypted_history_msg
 from .models import Message, ChatRoom
 
 User = get_user_model()
 
 @login_required
 def chat_view(request, room_name):
-    room_members_id = room_name.split('_')
+    user = request.user
 
-    members_list = []
+    try:
+        room = ChatRoom.objects.get(name=room_name)
+        if not room.members.filter(id=user.id).exists():
+            return render(request, 'dashboard.html')
+        
 
-    for member_id in room_members_id:
-        try:
-            user = User.objects.get(id=int(member_id))
+        messages = Message.objects.filter(room_name = room).order_by('timestamp')
+        message_contents = decrypted_history_msg(messages)
+        is_group = True
 
-            if not user.id == request.user.id:
-                members_list.append(user.username)            
+        members_list = []
 
-        except User.DoesNotExist:
-            return redirect('dashboard')
-    
-    members_name = " & ".join(members_list)
+        for member in room.members.all():
+            members_list.append(member.username)
 
-    messages = Message.objects.filter(room_name=room_name).order_by("timestamp")
+        members_name = " & ".join(members_list)
 
-    message_contents = []
+    except ChatRoom.DoesNotExist:
 
-    for message in messages:
-        try:
-            decrypted_msg = decrypt_message(message.content)
-        except Exception:
-            decrypted_msg = "[Decryption Failed]"
+        user_ids = room_name.split('_')
 
-        message_contents.append({
-            "sender": message.sender,
-            "timestamp": message.timestamp,
-            "content": decrypted_msg
-        })
+        if str(user.id) not in user_ids:
+            return render(request, "dashboard.html")
+
+        members_list = []
+
+        for member_id in user_ids:
+            try:
+                member = User.objects.get(id=int(member_id))
+
+                if not member.id == user.id:
+                    members_list.append(member.username)            
+
+            except User.DoesNotExist:
+                return redirect('dashboard')
+        
+        members_name = " & ".join(members_list)
+
+        messages = Message.objects.filter(room_name=room_name).order_by("timestamp")
+
+        message_contents = decrypted_history_msg(messages)
+        room = None
+        is_group = False
         
     return render(request, 'chat.html', {
         'room_name': room_name,
         'room_member': members_name,
         'messages': message_contents,
+        'is_group': is_group,
     })
 
 
@@ -83,4 +98,4 @@ def create_group_view(request):
         room.members.add(request.user)
         room.save()
 
-        return render("chat_room", room_name=room.name)
+        return redirect("chat_room", room_name=room.name)

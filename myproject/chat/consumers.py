@@ -1,7 +1,7 @@
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
 
-from .utils import save_message, decrypt_message
+from .utils import save_message
 from .models import ChatRoom
 import json
 
@@ -103,7 +103,6 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
 
 
 class GroupChatConsumer(AsyncWebsocketConsumer):
-
 
     async def connect(self):
         self.room_name = self.scope['url_route']['kwargs']['room_name']

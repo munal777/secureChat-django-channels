@@ -121,24 +121,6 @@
         letter-spacing: -0.02em;
       }
 
-      {% comment %} .header-info .status {
-        font-size: 13px;
-        opacity: 0.9;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        font-weight: 500;
-      }
-
-      .online-dot {
-        width: 10px;
-        height: 10px;
-        background: #fff;
-        border-radius: 50%;
-        animation: pulse 2s ease-in-out infinite;
-        box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
-      } {% endcomment %}
-
       @keyframes pulse {
         0%,
         100% {
@@ -1091,10 +1073,6 @@
         </div>
         <div class="header-info">
           <h2 id="room-name">{{ room_member }}</h2>
-          {% comment %} <div class="status">
-            <div class="online-dot"></div>
-            <span>Active now</span>
-          </div> {% endcomment %}
         </div>
       </div>
 
@@ -1134,7 +1112,7 @@
          const roomName = "{{ room_name }}";
          const currentUser = "{{ request.user.username }}"; // Get current user from Django
          const chatSocket = new WebSocket(
-             'ws://' + window.location.host + '/ws/chat/private/' + roomName + '/'
+              `ws://${window.location.host}/ws/${{% if is_group %} 'group' {% else %} 'private' {% endif %}}/${roomName}/`
          );
 
          const chatMessages = document.getElementById('chat-messages');
