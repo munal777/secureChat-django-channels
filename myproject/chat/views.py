@@ -78,7 +78,8 @@ def dashboard_view(request):
     ]
 
     return render(request, "dashboard.html", {
-        "user_rooms": user_rooms
+        "user_rooms": user_rooms,
+        "all_users": users,
     })
 
 
