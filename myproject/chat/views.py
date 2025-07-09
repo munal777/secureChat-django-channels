@@ -16,8 +16,8 @@ def chat_view(request, room_name):
         if not room.members.filter(id=user.id).exists():
             return render(request, 'dashboard.html')
         
-
-        messages = Message.objects.filter(room_name = room).order_by('timestamp')
+        messages = Message.objects.filter(room_name = room.name).order_by('timestamp')
+        print(messages)
         message_contents = decrypted_history_msg(messages)
         is_group = True
 
