@@ -3,7 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ChatApp - Private Room</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>SecureChat - Private Rooms</title>
     <style>
       * {
         margin: 0;
@@ -60,6 +61,62 @@
       .header-wrapper {
         position: relative;
         z-index: 100;
+      }
+
+      .back-to-dashboard {
+        width: 44px;
+        height: 44px;
+        border: none;
+        background: rgba(255, 255, 255, 0.15);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: rgba(255, 255, 255, 0.9);
+        border-radius: 16px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        font-size: 16px;
+        position: relative;
+        overflow: hidden;
+        flex-shrink: 0;
+        text-decoration: none;
+      }
+
+      .back-to-dashboard::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        transition: left 0.5s;
+      }
+
+      .back-to-dashboard:hover {
+        background: rgba(255, 255, 255, 0.25);
+        border-color: rgba(255, 255, 255, 0.3);
+        transform: translateX(-2px) scale(1.05);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+        text-decoration: none;
+      }
+
+      .back-to-dashboard:hover::before {
+        left: 100%;
+      }
+
+      .back-to-dashboard:active {
+        transform: translateX(-1px) scale(0.98);
+      }
+
+      .back-to-dashboard .fa-arrow-left {
+        font-size: 16px;
+        transition: transform 0.2s ease;
+      }
+
+      .back-to-dashboard:hover .fa-arrow-left {
+        transform: translateX(-2px);
       }
 
       .chat-header {
@@ -499,8 +556,19 @@
           max-height: none;
         }
 
+        .back-to-dashboard {
+          width: 40px;
+          height: 40px;
+          border-radius: 14px;
+        }
+
+        .back-to-dashboard .fa-arrow-left {
+          font-size: 14px;
+        }
+
         .chat-header {
           padding: 20px 24px;
+          gap: 12px;
         }
 
         .chat-messages {
@@ -522,8 +590,74 @@
       }
 
       @media (max-width: 480px) {
+        .back-to-dashboard {
+          width: 36px;
+          height: 36px;
+          border-radius: 12px;
+        }
+
+        .back-to-dashboard .fa-arrow-left {
+          font-size: 12px;
+        }
         .chat-header {
           padding: 16px 20px;
+          gap: 10px;
+        }
+
+        .back-to-dashboard.loading {
+          pointer-events: none;
+          opacity: 0.7;
+        }
+
+        .back-to-dashboard.loading .fa-arrow-left {
+          display: none;
+        }
+
+        .back-to-dashboard.loading::after {
+          content: "";
+          width: 16px;
+          height: 16px;
+          border: 2px solid rgba(255, 255, 255, 0.3);
+          border-top: 2px solid rgba(255, 255, 255, 0.9);
+          border-radius: 50%;
+          animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+          0% {
+            transform: rotate(0deg);
+          }
+          100% {
+            transform: rotate(360deg);
+          }
+        }
+
+        /* Tooltip for back button */
+        .back-to-dashboard[title]:hover::before {
+          content: attr(title);
+          position: absolute;
+          bottom: -35px;
+          left: 50%;
+          transform: translateX(-50%);
+          background: rgba(0, 0, 0, 0.8);
+          color: white;
+          padding: 4px 8px;
+          border-radius: 4px;
+          font-size: 12px;
+          white-space: nowrap;
+          z-index: 1000;
+          animation: tooltipFadeIn 0.2s ease;
+        }
+
+        @keyframes tooltipFadeIn {
+          from {
+            opacity: 0;
+            transform: translateX(-50%) translateY(-5px);
+          }
+          to {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+          }
         }
 
         .avatar {
@@ -1135,8 +1269,8 @@
       display: flex;
       align-items: center;
       gap: 6px;
-      background: rgba(255, 68, 68, 0.2);
-      border: 1px solid rgba(255, 68, 68, 0.3);
+      background: rgba(255, 68, 68, 0.9);
+      border: 1px solid rgba(255, 68, 68, 0.35);
       color: rgba(255, 255, 255, 0.9);
       padding: 8px 12px;
       border-radius: 12px;
@@ -1147,9 +1281,9 @@
     }
 
     .leave-group-btn:hover {
-      background: rgba(255, 68, 68, 0.3);
+      background: rgb(255, 68, 68);
       transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(255, 68, 68, 0.2);
+      box-shadow: 0 4px 12px rgb(255, 68, 68);
     }
 
     .leave-icon {
@@ -1324,86 +1458,192 @@
         font-size: 11px;
       }
     }
+
+    /* Font Awesome icon styling adjustments */
+    .fa-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Leave group button icon */
+    .leave-group-btn .fa-door-open {
+      font-size: 14px;
+      margin-right: 2px;
+    }
+
+    /* Voice button icons */
+    .voice-button .fa-microphone,
+    .voice-button .fa-stop {
+      font-size: 16px;
+    }
+
+    /* File button icon */
+    .file-button .fa-paperclip {
+      font-size: 16px;
+    }
+
+    /* Send button icon */
+    .send-button .fa-paper-plane {
+      font-size: 16px;
+    }
+
+    /* Voice message play/pause buttons */
+    .voice-play-btn .fa-play,
+    .voice-play-btn .fa-pause {
+      font-size: 14px;
+    }
+
+    /* Members toggle icons */
+    .members-count .fa-users {
+      font-size: 10px;
+      margin-right: 2px;
+    }
+
+    .chevron .fa-chevron-down {
+      font-size: 8px;
+      transition: transform 0.2s ease;
+    }
+
+    .members-toggle.active .chevron .fa-chevron-down {
+      transform: rotate(180deg);
+    }
+
+    /* Close members button */
+    .close-members .fa-times {
+      font-size: 14px;
+    }
+
+    /* Room avatar icons */
+    .avatar .fa-users,
+    .avatar .fa-comments {
+      font-size: 18px;
+    }
+
+    /* File type icons in messages */
+    .file-icon .fa-image,
+    .file-icon .fa-video,
+    .file-icon .fa-music,
+    .file-icon .fa-file-pdf,
+    .file-icon .fa-file-word,
+    .file-icon .fa-file-excel,
+    .file-icon .fa-file-powerpoint,
+    .file-icon .fa-file-archive,
+    .file-icon .fa-file-alt,
+    .file-icon .fa-cog,
+    .file-icon .fa-folder {
+      font-size: 20px;
+    }
+
+    /* File download icon */
+    .file-download .fa-download {
+      font-size: 12px;
+    }
+
+    /* Voice message label icon */
+    .voice-label .fa-microphone {
+      font-size: 11px;
+      margin-right: 2px;
+    }
     </style>
   </head>
   <body>
-    <div class="chat-container">
-      <div class="header-wrapper">
-        <div class="chat-header">
-          <div class="avatar">
-            <span id="room-avatar">{% if is_group %}👥{% else %}💬{% endif %}</span>
-          </div>
-          <div class="header-info">
-            <h2 id="room-name">{% if is_group %}{{ room_name }}{% else %}{{ room_member }}{% endif %}</h2>
+  <div class="chat-container">
+    <div class="header-wrapper">
+      <div class="chat-header">
+        <a href={% url 'dashboard' %} class="back-to-dashboard" title="Back to Dashboard">
+          <i class="fas fa-arrow-left"></i>
+        </a>
+        <div class="avatar">
+          <span id="room-avatar">
             {% if is_group %}
-            <div class="group-info">
-              <span class="group-indicator">Group Chat</span>
-              <button class="members-toggle" id="membersToggle">
-                <span class="members-count">👥 {{ members_num }} members</span>
-                <span class="chevron">▼</span>
-              </button>
-            </div>
+              <i class="fas fa-users"></i>
+            {% else %}
+              <i class="fas fa-comments"></i>
             {% endif %}
-          </div>
+          </span>
+        </div>
+        <div class="header-info">
+          <h2 id="room-name">{% if is_group %}{{ room_name }}{% else %}{{ room_member }}{% endif %}</h2>
           {% if is_group %}
-          <div class="header-actions">
-            <button class="leave-group-btn" id="leaveGroupBtn">
-              <span class="leave-icon">🚪</span>
-              <span class="leave-text">Leave</span>
+          <div class="group-info">
+            <span class="group-indicator">Group Chat</span>
+            <button class="members-toggle" id="membersToggle">
+              <span class="members-count">
+                <i class="fas fa-users"></i> {{ members_num }} members
+              </span>
+              <span class="chevron">
+                <i class="fas fa-chevron-down"></i>
+              </span>
             </button>
           </div>
           {% endif %}
         </div>
-
         {% if is_group %}
-        <div class="members-list" id="membersList">
-          <div class="members-header">
-            <h3>Group Members</h3>
-            <button class="close-members" id="closeMembersBtn">×</button>
-          </div>
-          <div class="members-content">
-            {% for member in members_list %}
-            <div class="member-item">
-              <div class="member-avatar">{{ member|first|upper }}</div>
-              <span class="member-name">{{ member }}</span>
-            </div>
-            {% endfor %}
-          </div>
+        <div class="header-actions">
+          <button class="leave-group-btn" id="leaveGroupBtn">
+            <i class="fas fa-door-open leave-icon"></i>
+            <span class="leave-text">Leave</span>
+          </button>
         </div>
         {% endif %}
       </div>
-
-      <div class="chat-messages" id="chat-messages">
-        <div class="empty-state">
-          <div class="empty-state-icon">💬</div>
-          <div class="empty-state-text">Start your conversation</div>
-          <div class="empty-state-subtext">
-            Send a message to begin chatting
+      
+      {% if is_group %}
+      <div class="members-list" id="membersList">
+        <div class="members-header">
+          <h3>Group Members</h3>
+          <button class="close-members" id="closeMembersBtn">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="members-content">
+          {% for member in members_list %}
+          <div class="member-item">
+            <div class="member-avatar">{{ member|first|upper }}</div>
+            <span class="member-name">{{ member }}</span>
           </div>
+          {% endfor %}
         </div>
       </div>
+      {% endif %}
+    </div>
 
-      <div class="chat-input-container">
-        <div class="chat-input">
-          <input
-            type="text"
-            id="message-input"
-            class="message-input"
-            placeholder="Type your message..."
-            autocomplete="off"
-          />
-          <input
-            type="file"
-            id="file-input"
-            accept="image/*,video/*,.pdf,.doc,.docx,.txt,.zip,.rar"
-            style="display: none;"
-          />
-          <button id="file-button" class="file-button">📎</button>
-          <button id="voice-button" class="voice-button">🎤</button>
-          <button id="send-button" class="send-button">➤</button>
-        </div>
+    <div class="chat-messages" id="chat-messages">
+      <div class="empty-state">
+        <div class="empty-state-icon"><i class="fas fa-comments" style="font-size: 48px;"></i></div>
+        <div class="empty-state-text">Start your conversation</div>
+        <div class="empty-state-subtext">Send a message to begin chatting</div>
       </div>
     </div>
+
+    <div class="chat-input-container">
+      <div class="chat-input">
+        <input
+          type="text"
+          id="message-input"
+          class="message-input"
+          placeholder="Type your message..."
+          autocomplete="off"
+        />
+        <input
+          type="file"
+          id="file-input"
+          accept="image/*,video/*,.pdf,.doc,.docx,.txt,.zip,.rar"
+          style="display: none;"
+        />
+        <button id="file-button" class="file-button">
+          <i class="fas fa-paperclip"></i>
+        </button>
+        <button id="voice-button" class="voice-button">
+          <i class="fas fa-microphone"></i>
+        </button>
+        <button id="send-button" class="send-button">
+          <i class="fas fa-paper-plane"></i>
+        </button>
+      </div>
+    </div>
+  </div>
 
     <script>
          const roomName = "{{ room_name }}";
@@ -1492,20 +1732,20 @@
              return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
          }
 
-          
-        // Enhanced file icon function with more file types
         function getFileIcon(mimetype) {
-            if (mimetype.startsWith('image/')) return '🖼️';
-            if (mimetype.startsWith('video/')) return '🎥';
-            if (mimetype.startsWith('audio/')) return '🎵';
-            if (mimetype.includes('pdf')) return '📄';
-            if (mimetype.includes('word') || mimetype.includes('document')) return '📝';
-            if (mimetype.includes('excel') || mimetype.includes('spreadsheet')) return '📊';
-            if (mimetype.includes('powerpoint') || mimetype.includes('presentation')) return '📊';
-            if (mimetype.includes('zip') || mimetype.includes('rar') || mimetype.includes('7z')) return '📦';
-            if (mimetype.includes('text/')) return '📃';
-            if (mimetype.includes('json') || mimetype.includes('xml')) return '⚙️';
-            return '📁';
+            if (mimetype.startsWith("image/")) return '<i class="fas fa-image"></i>'
+            if (mimetype.startsWith("video/")) return '<i class="fas fa-video"></i>'
+            if (mimetype.startsWith("audio/")) return '<i class="fas fa-music"></i>'
+            if (mimetype.includes("pdf")) return '<i class="fas fa-file-pdf"></i>'
+            if (mimetype.includes("word") || mimetype.includes("document")) return '<i class="fas fa-file-word"></i>'
+            if (mimetype.includes("excel") || mimetype.includes("spreadsheet")) return '<i class="fas fa-file-excel"></i>'
+            if (mimetype.includes("powerpoint") || mimetype.includes("presentation"))
+              return '<i class="fas fa-file-powerpoint"></i>'
+            if (mimetype.includes("zip") || mimetype.includes("rar") || mimetype.includes("7z"))
+              return '<i class="fas fa-file-archive"></i>'
+            if (mimetype.includes("text/")) return '<i class="fas fa-file-alt"></i>'
+            if (mimetype.includes("json") || mimetype.includes("xml")) return '<i class="fas fa-cog"></i>'
+            return '<i class="fas fa-folder"></i>'
         }
 
          // Function to open image in modal
@@ -1604,15 +1844,16 @@
              } else {
                  fileContent = `
                      <div class="file-attachment">
-                         <div class="file-icon">${fileIcon}</div>
-                         <div class="file-info">
+                          <div class="file-icon">${fileIcon}</div>
+                          <div class="file-info">
                              <div class="file-name" title="${filename}">${filename}</div>
                              <div class="file-size">${fileSize}</div>
-                         </div>
-                         <a href="data:${mimetype};base64,${data}" 
+                          </div>
+                          <a href="data:${mimetype};base64,${data}" 
                             download="${filename}" 
                             class="file-download"
-                            title="Download file">⬇️</a>
+                            title="Download file"> <i class="fas fa-download"></i>
+                          </a>
                      </div>
                  `;
              }
@@ -1652,7 +1893,9 @@
                     <div class="voice-controls">
                         <button class="voice-play-btn" onclick="toggleVoicePlayback(this)">▶️</button>
                         <div class="voice-info">
-                            <div class="voice-label">🎤 Voice Message</div>
+                            <div class="voice-label">
+                              <i class="fas fa-microphone"></i> Voice Message
+                            </div>
                             <div class="voice-duration" id="duration-${Date.now()}">--:--</div>
                         </div>
                     </div>
@@ -1688,23 +1931,23 @@
                         otherAudio.pause();
                         otherAudio.currentTime = 0;
                         // Reset other play buttons
-                        otherAudio.closest('.voice-message').querySelector('.voice-play-btn').textContent = '▶️';
+                        otherAudio.closest('.voice-message').querySelector('.voice-play-btn').innerHTML = '<i class="fas fa-play"></i>';
                     }
                 });
                 
-                audio.play();
-                button.textContent = '⏸️';
-                
+                audio.play()
+                button.innerHTML = '<i class="fas fa-pause"></i>'
+
                 audio.onended = () => {
-                    button.textContent = '▶️';
-                    audio.currentTime = 0;
-                };
-            } else {
-                audio.pause();
-                button.textContent = '▶️';
-                audio.currentTime = 0;
+                  button.innerHTML = '<i class="fas fa-play"></i>'
+                  audio.currentTime = 0
+                }
+              } else {
+                audio.pause()
+                button.innerHTML = '<i class="fas fa-play"></i>'
+                audio.currentTime = 0
+              }
             }
-        }
 
         // Update voice duration display
         function updateVoiceDuration(audio) {
@@ -1835,7 +2078,7 @@
 
                  mediaRecorder.start();
                  isRecording = true;
-                 voiceButton.textContent = '⏹️';
+                 voiceButton.innerHTML = '<i class="fas fa-stop"></i>';
                  voiceButton.classList.add('recording');
              } catch (err) {
                  console.error('Error accessing microphone:', err);
@@ -1847,7 +2090,7 @@
              if (mediaRecorder && isRecording) {
                  mediaRecorder.stop();
                  isRecording = false;
-                 voiceButton.textContent = '🎤';
+                 voiceButton.innerHTML = '<i class="fas fa-microphone"></i>';
                  voiceButton.classList.remove('recording');
              }
          }
