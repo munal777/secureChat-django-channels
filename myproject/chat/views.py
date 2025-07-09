@@ -25,8 +25,10 @@ def chat_view(request, room_name):
 
         for member in room.members.all():
             members_list.append(member.username)
+        
+        members_num = len(members_list)
 
-        members_name = " & ".join(members_list)
+        members_name = None
 
     except ChatRoom.DoesNotExist:
 
@@ -54,12 +56,15 @@ def chat_view(request, room_name):
         message_contents = decrypted_history_msg(messages)
         room = None
         is_group = False
+        members_num = None
         
     return render(request, 'chat.html', {
         'room_name': room_name,
         'room_member': members_name,
+        'members_list': members_list,
         'messages': message_contents,
         'is_group': is_group,
+        'members_num': members_num,
     })
 
 
@@ -67,6 +72,7 @@ def chat_view(request, room_name):
 def dashboard_view(request):
     current_user = request.user
     users = User.objects.exclude(id=request.user.id)
+    group_rooms = ChatRoom.objects.filter(members=request.user, is_group=True)
 
     user_rooms = [
         {
@@ -80,6 +86,7 @@ def dashboard_view(request):
     return render(request, "dashboard.html", {
         "user_rooms": user_rooms,
         "all_users": users,
+        "group_rooms": group_rooms,
     })
 
 

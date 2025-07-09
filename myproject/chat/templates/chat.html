@@ -53,8 +53,13 @@
           inset 0 1px 0 rgba(255, 255, 255, 0.3);
         display: flex;
         flex-direction: column;
-        overflow: hidden;
         position: relative;
+        overflow: hidden;
+      }
+
+      .header-wrapper {
+        position: relative;
+        z-index: 100;
       }
 
       .chat-header {
@@ -65,7 +70,7 @@
         align-items: center;
         gap: 16px;
         position: relative;
-        overflow: hidden;
+        z-index: 1;
       }
 
       .chat-header::before {
@@ -1063,20 +1068,309 @@
         font-size: 14px;
       }
     }
+
+    /* Group info container */
+    .group-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-top: 4px;
+    }
+
+    .group-indicator {
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.8);
+      font-weight: 500;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 2px 8px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    /* Members toggle button */
+    .members-toggle {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: white;
+      padding: 4px 10px;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-size: 11px;
+      font-weight: 500;
+    }
+
+    .members-toggle:hover {
+      background: rgba(255, 255, 255, 0.2);
+      transform: translateY(-1px);
+    }
+
+    .members-count {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .chevron {
+      font-size: 10px;
+      transition: transform 0.2s ease;
+    }
+
+    .members-toggle.active .chevron {
+      transform: rotate(180deg);
+    }
+
+    /* Header actions */
+    .header-actions {
+      display: flex;
+      align-items: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .leave-group-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255, 68, 68, 0.2);
+      border: 1px solid rgba(255, 68, 68, 0.3);
+      color: rgba(255, 255, 255, 0.9);
+      padding: 8px 12px;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .leave-group-btn:hover {
+      background: rgba(255, 68, 68, 0.3);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(255, 68, 68, 0.2);
+    }
+
+    .leave-icon {
+      font-size: 14px;
+    }
+
+    .leave-text {
+      font-weight: 600;
+    }
+
+    /* Members list overlay */
+    .members-list {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: rgba(255, 255, 255, 0.98);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(46, 204, 113, 0.2);
+      border-radius: 0 0 16px 16px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+      z-index: 9999;
+      max-height: 300px;
+      overflow-y: auto;
+      min-height: 50px;
+      visibility: hidden; /* Use CSS display instead of inline style */
+      opacity: 0;
+      transform: translateY(-10px);
+      transition: all 0.3s ease;
+      pointer-events: none; 
+    }
+
+    /* Show state for members list */
+    .members-list.show {
+      visibility: visible;
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .members-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 20px;
+      border-bottom: 1px solid rgba(46, 204, 113, 0.1);
+      background: rgba(46, 204, 113, 0.05);
+    }
+
+    .members-header h3 {
+      margin: 0;
+      color: #2ecc71;
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .close-members {
+      width: 28px;
+      height: 28px;
+      border: none;
+      background: rgba(255, 68, 68, 0.1);
+      color: #ff4444;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: bold;
+      transition: all 0.2s ease;
+    }
+
+    .close-members:hover {
+      background: rgba(255, 68, 68, 0.2);
+      transform: scale(1.1);
+    }
+
+    .members-content {
+      padding: 12px 0;
+    }
+
+    .member-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 8px 20px;
+      transition: background 0.2s ease;
+    }
+
+    .member-item:hover {
+      background: rgba(46, 204, 113, 0.05);
+    }
+
+    .member-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, #2ecc71, #27ae60);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .member-name {
+      font-size: 14px;
+      color: #2c3e50;
+      font-weight: 500;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .group-info {
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      
+      .members-toggle,
+      .leave-group-btn {
+        font-size: 10px;
+        padding: 3px 8px;
+      }
+      
+      .leave-text {
+        display: none;
+      }
+      
+      .members-list {
+        max-height: 250px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .header-info h2 {
+        font-size: 18px;
+      }
+      
+      .group-indicator {
+        font-size: 10px;
+        padding: 1px 6px;
+      }
+      
+      .members-toggle {
+        padding: 2px 6px;
+      }
+      
+      .leave-group-btn {
+        padding: 4px 8px;
+      }
+      
+      .member-item {
+        padding: 6px 16px;
+      }
+      
+      .member-avatar {
+        width: 28px;
+        height: 28px;
+        font-size: 11px;
+      }
+    }
     </style>
   </head>
   <body>
     <div class="chat-container">
-      <div class="chat-header">
-        <div class="avatar">
-          <span id="room-avatar">{% if is_group %}👥{% else %}💬{% endif %}</span>
-        </div>
-        <div class="header-info">
-          <h2 id="room-name">{% if is_group %} {{ room_name }} {% else %} {{ room_member }} {% endif %}</h2>
+      <div class="header-wrapper">
+        <div class="chat-header">
+          <div class="avatar">
+            <span id="room-avatar">{% if is_group %}👥{% else %}💬{% endif %}</span>
+          </div>
+          <div class="header-info">
+            <h2 id="room-name">{% if is_group %}{{ room_name }}{% else %}{{ room_member }}{% endif %}</h2>
+            {% if is_group %}
+            <div class="group-info">
+              <span class="group-indicator">Group Chat</span>
+              <button class="members-toggle" id="membersToggle">
+                <span class="members-count">👥 {{ members_num }} members</span>
+                <span class="chevron">▼</span>
+              </button>
+            </div>
+            {% endif %}
+          </div>
           {% if is_group %}
-            <div class="group-indicator">Group Chat</div>
+          <div class="header-actions">
+            <button class="leave-group-btn" id="leaveGroupBtn">
+              <span class="leave-icon">🚪</span>
+              <span class="leave-text">Leave</span>
+            </button>
+          </div>
           {% endif %}
         </div>
+
+        {% if is_group %}
+        <div class="members-list" id="membersList">
+          <div class="members-header">
+            <h3>Group Members</h3>
+            <button class="close-members" id="closeMembersBtn">×</button>
+          </div>
+          <div class="members-content">
+            {% for member in members_list %}
+            <div class="member-item">
+              <div class="member-avatar">{{ member|first|upper }}</div>
+              <span class="member-name">{{ member }}</span>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+        {% endif %}
       </div>
 
       <div class="chat-messages" id="chat-messages">
@@ -1721,6 +2015,67 @@
              console.error('WebSocket error:', e);
          };
 
+        document.addEventListener('DOMContentLoaded', function() {
+          const membersToggle = document.getElementById('membersToggle');
+          const membersList = document.getElementById('membersList');
+          const closeMembersBtn = document.getElementById('closeMembersBtn');
+          const leaveGroupBtn = document.getElementById('leaveGroupBtn');
+
+          // Toggle members list
+          if (membersToggle && membersList) {
+            membersToggle.addEventListener('click', function(e) {
+              e.preventDefault();
+              e.stopPropagation();
+
+              const isVisible = membersList.classList.contains('show');
+
+              if (isVisible) {
+                membersList.classList.remove('show');
+                membersToggle.classList.remove('active');
+              } else {
+                membersList.classList.add('show');
+                membersToggle.classList.add('active');
+              }
+
+              console.log('Toggle clicked, list visible:', !isVisible);
+            });
+          }
+
+          // Close members list
+          if (closeMembersBtn && membersList && membersToggle) {
+            closeMembersBtn.addEventListener('click', function(e) {
+              e.preventDefault();
+              e.stopPropagation();
+
+              membersList.classList.remove('show');
+              membersToggle.classList.remove('active');
+            });
+          }
+
+          // Leave group functionality
+          if (leaveGroupBtn) {
+            leaveGroupBtn.addEventListener('click', function(e) {
+              e.preventDefault();
+
+              if (confirm('Are you sure you want to leave this group?')) {
+                console.log('User wants to leave group');
+                // Add your leave group logic here
+              }
+            });
+          }
+
+          // Close members list when clicking outside
+          document.addEventListener('click', function(event) {
+            if (membersList && membersToggle) {
+              if (!membersToggle.contains(event.target) && !membersList.contains(event.target)) {
+                membersList.classList.remove('show');
+                if (membersToggle.classList.contains('active')) {
+                  membersToggle.classList.remove('active');
+                }
+              }
+            }
+          });
+        });
     </script>
   </body>
 </html>

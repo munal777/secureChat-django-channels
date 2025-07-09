@@ -181,16 +181,6 @@
     </style>
   </head>
   <body>
-    {% comment %} <h3>Start a private chat with:</h3>
-    <ul>
-      {% for item in user_rooms %}
-      <li>
-        <a href="{% url 'chat_room' room_name=item.room_name %}">
-          {{ item.username }}
-        </a>
-      </li>
-      {% endfor %}
-    </ul> {% endcomment %}
     <div class="dashboard-container">
       <div class="section">
         <h2>Chat Dashboard</h2>
@@ -246,9 +236,29 @@
             {% endfor %}
           </ul>
         {% else %}
-          <div class="no-chats">No group chats available</div>
+          <div class="no-chats">No other users are available</div>
         {% endif %}
       </div>
+
+      <!-- group Chats Section -->
+      <div class="section">
+        <h3>Group Chats</h3>
+        {% if group_rooms %}
+          <ul>
+            {% for item in group_rooms %}
+              <li>
+                <a href="{% url 'chat_room' room_name=item.name %}">
+                  {{ item.name }}
+                  <span class="private-indicator">Group</span>
+                </a>
+              </li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <div class="no-chats">No Group are available</div>
+        {% endif %}
+      </div>
+
     </div>
 
     <script>
