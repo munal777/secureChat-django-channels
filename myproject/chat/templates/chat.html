@@ -1580,12 +1580,14 @@
           {% endif %}
         </div>
         {% if is_group %}
-        <div class="header-actions">
+        <form class="header-actions" method="post">
+          {% csrf_token %}
+          <input type="hidden" name="room_name" value={{ room_name }} >
           <button class="leave-group-btn" id="leaveGroupBtn">
             <i class="fas fa-door-open leave-icon"></i>
             <span class="leave-text">Leave</span>
           </button>
-        </div>
+        </form>
         {% endif %}
       </div>
       

@@ -3,6 +3,8 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 
+from django.conf import settings
+
 User = get_user_model()
 
 def register_view(request):
@@ -46,4 +48,4 @@ def login_view(request):
 
 def logout_view(request):
     logout(request)
-    return redirect("login")
+    return redirect(settings.LOGOUT_REDIRECT_URL)

@@ -86,6 +86,7 @@ def dashboard_view(request):
         "user_rooms": user_rooms,
         "all_users": users,
         "group_rooms": group_rooms,
+        "current_user": current_user,
     })
 
 
@@ -106,3 +107,19 @@ def create_group_view(request):
         room.save()
 
         return redirect("chat_room", room_name=room.name)
+    
+
+@login_required
+def leave_group_view(request):
+    if request.method == "POST":
+        group_name = request.POST["room_name"]
+        user = request.user
+
+        room = ChatRoom.objects.get(name=group_name, is_group=True)
+        room.members.remove(user)
+        
+        return redirect('dashboard')
+
+
+    
+

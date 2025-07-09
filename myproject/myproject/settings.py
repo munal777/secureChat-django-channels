@@ -125,10 +125,7 @@ CHANNEL_LAYERS = {
     },
 }
 
-
-LOGIN_REDIRECT_URL = '/dashboard/'
 LOGOUT_REDIRECT_URL = '/login/'
-LOGIN_URL = '/login/'
 
 
 FERNET_SECRET_KEY= '_YeJIL4Ij4rVVXn_WDnpErLqDjj5uflG9m_mB1hV5Ww='

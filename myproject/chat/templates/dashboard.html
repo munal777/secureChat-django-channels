@@ -14,7 +14,7 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background-color: #f9fafb;
+            background-color:rgb(243, 243, 243);
             color: #374151;
             line-height: 1.6;
         }
@@ -406,13 +406,13 @@
                     <div class="welcome-content">
                         <h1 class="welcome-title">
                             <i class="fas fa-comments icon"></i>
-                            Chat Dashboard
+                            {{ current_user }}
                         </h1>
                         <p class="card-description">
                             Welcome back! Start chatting with your contacts or create a new group.
                         </p>
                     </div>
-                    <a href="{% url 'logout' %}" class="logout-btn" onclick="return confirm('Are you sure you want to logout?')">
+                    <a href="{% url 'logout' %}" class="logout-btn">
                         <i class="fas fa-sign-out-alt"></i>
                         Logout
                     </a>
