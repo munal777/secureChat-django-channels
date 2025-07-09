@@ -17,7 +17,7 @@ def chat_view(request, room_name):
             return render(request, 'dashboard.html')
         
         messages = Message.objects.filter(room_name = room.name).order_by('timestamp')
-        print(messages)
+
         message_contents = decrypted_history_msg(messages)
         is_group = True
 
@@ -78,7 +78,6 @@ def dashboard_view(request):
         {
             "username": user.username,
             "room_name": make_room_name(current_user.id, user.id),
-            # "room_member": f"{current_user.username} {user.username}"
         }
         for user in users
     ]

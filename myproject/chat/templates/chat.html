@@ -1998,6 +1998,7 @@
              removeEmptyState();
 
              let lastDate = null;
+             const fragment = document.createDocumentFragment();
 
              chatHistory.forEach(historyMessage => {
                  const messageDate = formatDate(historyMessage.timestamp);
@@ -2005,7 +2006,7 @@
                  // Add date separator if date changed
                  if (messageDate !== lastDate) {
                      const dateSeparator = createDateSeparator(messageDate);
-                     chatMessages.appendChild(dateSeparator);
+                     fragment.appendChild(dateSeparator);
                      lastDate = messageDate;
                  }
 
@@ -2018,14 +2019,21 @@
                  // Add history class for styling with staggered animation
                  messageEl.classList.add('history-message');
                  messageEl.style.setProperty('--index', chatHistory.indexOf(historyMessage));
-                 chatMessages.appendChild(messageEl);
+
+                 fragment.appendChild(messageEl);
              });
+
+             chatMessages.appendChild(fragment); 
 
              // Scroll to bottom after loading history
              setTimeout(() => {
                  chatMessages.scrollTop = chatMessages.scrollHeight;
              }, 100);
          }
+
+         document.addEventListener("DOMContentLoaded", function () {
+            loadChatHistory()
+         });
 
          // Smooth scroll to bottom
          function scrollToBottom() {
