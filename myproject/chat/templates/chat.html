@@ -1580,7 +1580,7 @@
           {% endif %}
         </div>
         {% if is_group %}
-        <form class="header-actions" method="post">
+        <form class="header-actions" action="{% url 'leave_group' %}" method="post">
           {% csrf_token %}
           <input type="hidden" name="room_name" value={{ room_name }} >
           <button class="leave-group-btn" id="leaveGroupBtn">
@@ -2250,11 +2250,7 @@
          });
 
          // Focus input on page load and load chat history
-         window.addEventListener('load', () => {
-             loadChatHistory();
-             messageInput.focus();
-         });
-
+     
          // Connection status handling
          chatSocket.onopen = function(e) {
              console.log('Connected to chat');
@@ -2305,17 +2301,7 @@
             });
           }
 
-          // Leave group functionality
-          if (leaveGroupBtn) {
-            leaveGroupBtn.addEventListener('click', function(e) {
-              e.preventDefault();
-
-              if (confirm('Are you sure you want to leave this group?')) {
-                console.log('User wants to leave group');
-                // Add your leave group logic here
-              }
-            });
-          }
+          
 
           // Close members list when clicking outside
           document.addEventListener('click', function(event) {
