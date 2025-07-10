@@ -14,7 +14,10 @@ class Message(models.Model):
 
 
 class ChatRoom(models.Model):
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, unique=True)
     members = models.ManyToManyField(User, related_name='chat_rooms')
     is_group = models.BooleanField(default=False)
     creation_date = models.DateField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.name}"

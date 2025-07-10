@@ -395,6 +395,26 @@
                 font-size: 1rem;
             }
         }
+
+        .message {
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            border: 1px solid;
+        }
+
+        .message-success {
+            background: #f0fff4;
+            border-color: #c6f6d5;
+            color: #2d7d32;
+        }
+
+        .message-error {
+            background: #fff5f5;
+            border-color: #fed7d7;
+            color: #c53030;
+        }
     </style>
 </head>
 <body>
@@ -423,6 +443,13 @@
         <!-- Create Group Section -->
         <div class="card">
             <div class="card-header">
+                {% if messages %}
+                    {% for message in messages %}
+                    <div class="message message-{{ message.tags }}">
+                        {{ message }}
+                    </div>
+                    {% endfor %}
+                {% endif %}
                 <div class="section-header">
                     <h2 class="card-title">
                         <i class="fas fa-users icon"></i>

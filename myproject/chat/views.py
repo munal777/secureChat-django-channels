@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model
+from django.contrib import messages
 
 from .utils import make_room_name, decrypted_history_msg
 from .models import Message, ChatRoom
@@ -101,12 +102,19 @@ def create_group_view(request):
         group_name = request.POST["room_name"]
         member_ids = request.POST.getlist("members")
 
-        room = ChatRoom.objects.create(name=group_name, is_group=True)
-        room.members.set(User.objects.filter(id__in = member_ids))
-        room.members.add(request.user)
-        room.save()
+        if not ChatRoom.objects.filter(name=group_name).exists():
+            room = ChatRoom.objects.create(name=group_name, is_group=True)
+            room.members.set(User.objects.filter(id__in = member_ids))
+            room.members.add(request.user)
+            room.save()
 
-        return redirect("chat_room", room_name=room.name)
+            print("hello here")
+
+            return redirect("chat_room", room_name=room.name)
+        
+        messages.error(request, "The enter room name already exists.")
+        print("got here")
+        return redirect("dashboard")
     
 
 @login_required
