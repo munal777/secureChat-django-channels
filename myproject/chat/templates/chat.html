@@ -1646,7 +1646,7 @@
          const roomName = "{{ room_name }}";
          const currentUser = "{{ request.user.username }}"; // Get current user from Django
          const chatSocket = new WebSocket(
-              `ws://${window.location.host}/ws/chat/{% if is_group %}group{% else %}private{% endif %}/${roomName}/`
+              `${window.location.protocol === "https:" ? "wss" : "ws"}://${window.location.host}/ws/chat/{% if is_group %}group{% else %}private{% endif %}/${roomName}/`
          );
 
          const chatMessages = document.getElementById('chat-messages');
