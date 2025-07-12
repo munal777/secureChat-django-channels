@@ -6,6 +6,9 @@ from .models import ChatRoom
 import json
 
 class PrivateChatConsumer(AsyncWebsocketConsumer):
+    """
+    Handles real-time private messaging between two users over WebSocket.
+    """
 
     async def connect(self):
         self.room_name = self.scope['url_route']['kwargs']['room_name']
