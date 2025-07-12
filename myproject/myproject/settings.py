@@ -14,7 +14,7 @@ SECRET_KEY = config("DJANGO_SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config("DEBUG", cast=bool)
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = config('ALLOWED_HOSTS')
 
 
 # Application definition
@@ -76,7 +76,7 @@ if USE_POSTGRES:
             "USER": config("DB_USER"),
             "PASSWORD": config("DB_PASSWORD"),
             "HOST": config("DB_HOST"),
-            "PORT": config("PORT"),
+            "PORT": config("DB_PORT"),
         }
     }
 else:
