@@ -1,7 +1,7 @@
 services:
   - type: web
     name: securechat
-    env: python
+    runtime: python
     plan: free
     buildCommand: ./build.sh
     startCommand: daphne myproject.asgi:application
