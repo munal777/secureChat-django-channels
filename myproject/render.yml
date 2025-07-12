@@ -23,5 +23,12 @@ services:
         value: dpg-d1oen7je5dus73e56jdg-a
       - key: DB_PORT
         value: "5432"
-      
+      - key: USE_POSTGRES
+        value: "False"
+      - key: REDIS_URL
+        value: redis://red-d1oe4obuibrs73cljeh0:6379
+      - key: FERNET_SECRET_KEY
+        value: _YeJIL4Ij4rVVXn_WDnpErLqDjj5uflG9m_mB1hV5Ww=
+      - key: ALLOWED_HOSTS
+        value: securechat.onrender.com  # Update with your actual domain after deploy
 
