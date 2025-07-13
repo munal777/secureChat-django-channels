@@ -9,4 +9,6 @@ echo "Running database migrations..."
 python manage.py migrate
 
 echo "Starting Django server..."
-daphne myproject.asgi:application
+
+PORT=${PORT:-8000}
+daphne -b 0.0.0.0 -p $PORT myproject.asgi:application

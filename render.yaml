@@ -34,4 +34,6 @@ services:
         value: _YeJIL4Ij4rVVXn_WDnpErLqDjj5uflG9m_mB1hV5Ww=
       - key: ALLOWED_HOSTS
         value: "*"  # Update with your actual domain after deploy
+      - key: PORT  # Add this
+        value: "8000"
 
