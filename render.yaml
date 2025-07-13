@@ -5,7 +5,7 @@ services:
     plan: free
     region: singapore
     buildCommand: ./build.sh
-    startCommand: python manage.py migrate && daphne -b 0.0.0.0 -p $PORT myproject.asgi:application
+    startCommand: ./startup.sh
     rootDir: myproject
     envVars:
       - key: DJANGO_SETTINGS_MODULE
