@@ -3,6 +3,7 @@ services:
     name: securechat
     runtime: python
     plan: free
+    region: singapore
     buildCommand: ./build.sh
     startCommand: daphne myproject.asgi:application
     rootDir: myproject
