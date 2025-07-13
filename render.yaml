@@ -5,7 +5,7 @@ services:
     plan: free
     region: singapore
     buildCommand: ./build.sh
-    startCommand: daphne myproject.asgi:application
+    startCommand: ./startup.sh
     rootDir: myproject
     envVars:
       - key: DJANGO_SECRET_KEY
