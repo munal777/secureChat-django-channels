@@ -21,7 +21,7 @@ services:
       - key: DB_PASSWORD
         value: Okf7zd4SgdoO963RViApZzeH6I340Dti
       - key: DB_HOST
-        value: dpg-d1oen7je5dus73e56jdg-a
+        value: dpg-d1oen7je5dus73e56jdg-a.singapore-postgres.render.internal
       - key: DB_PORT
         value: "5432"
       - key: USE_POSTGRES
