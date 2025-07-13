@@ -8,6 +8,8 @@ services:
     startCommand: ./startup.sh
     rootDir: myproject
     envVars:
+      - key: DJANGO_SETTINGS_MODULE
+        value: myproject.settings
       - key: DJANGO_SECRET_KEY
         value: django-insecure-+2(ztamd_u#fv*i8107o8bi3sxchrfa=v*#q13r!_z^z!t6^*4
       - key: DEBUG
