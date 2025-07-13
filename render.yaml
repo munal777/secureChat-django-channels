@@ -5,7 +5,6 @@ services:
     plan: free
     region: singapore
     buildCommand: ./build.sh
-    startCommand: ./startup.sh
     rootDir: myproject
     envVars:
       - key: DJANGO_SETTINGS_MODULE
