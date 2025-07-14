@@ -108,8 +108,6 @@ def create_group_view(request):
             room.members.add(request.user)
             room.save()
 
-            print("hello here")
-
             return redirect("chat_room", room_name=room.name)
         
         messages.error(request, "The enter room name already exists.")
