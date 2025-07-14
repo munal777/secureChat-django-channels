@@ -35,4 +35,4 @@ services:
       - key: FERNET_SECRET_KEY
         value: _YeJIL4Ij4rVVXn_WDnpErLqDjj5uflG9m_mB1hV5Ww=
       - key: ALLOWED_HOSTS
-        value: "*"  # Update with your actual domain after deploy
+        value: https://securechat-8e7t.onrender.com  # Update with your actual domain after deploy
