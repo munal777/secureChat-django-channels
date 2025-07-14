@@ -1,6 +1,8 @@
 from pathlib import Path
 from decouple import config
 
+import dj_database_url
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -67,25 +69,31 @@ ASGI_APPLICATION = 'myproject.asgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-USE_POSTGRES = config("USE_POSTGRES", cast=bool, default=True)
-if USE_POSTGRES:
-    DATABASES = {
-        "default": {
-            "ENGINE": config("DB_ENGINE"),
-            "NAME": config("DB_NAME"),
-            "USER": config("DB_USER"),
-            "PASSWORD": config("DB_PASSWORD"),
-            "HOST": config("DB_HOST"),
-            "PORT": config("DB_PORT"),
-        }
-    }
-else:
-    DATABASES = {
-        "default": {
-            "ENGINE": "django.db.backends.sqlite3",
-            "NAME": BASE_DIR / "db.sqlite3",
-        }
-    }
+# USE_POSTGRES = config("USE_POSTGRES", cast=bool, default=True)
+# if USE_POSTGRES:
+#     DATABASES = {
+#         "default": {
+#             "ENGINE": config("DB_ENGINE"),
+#             "NAME": config("DB_NAME"),
+#             "USER": config("DB_USER"),
+#             "PASSWORD": config("DB_PASSWORD"),
+#             "HOST": config("DB_HOST"),
+#             "PORT": config("DB_PORT"),
+#         }
+#     }
+# else:
+#     DATABASES = {
+#         "default": {
+#             "ENGINE": "django.db.backends.sqlite3",
+#             "NAME": BASE_DIR / "db.sqlite3",
+#         }
+#     }
+
+# Use DATABASE_URL for database configuration
+DATABASE_URL = config('DATABASE_URL', default='sqlite:///db.sqlite3')
+DATABASES = {
+    'default': dj_database_url.parse(DATABASE_URL)
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
