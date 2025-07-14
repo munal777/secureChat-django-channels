@@ -71,18 +71,18 @@ ASGI_APPLICATION = 'myproject.asgi.application'
 
 
 # Use DATABASE_URL for database configuration
-if not DEBUG:
-    DATABASE_URL = config('DATABASE_URL')
-    DATABASES = {
-        'default': dj_database_url.parse(DATABASE_URL)
-    }
-else:
-    DATABASES = {
-        "default": {
-            "ENGINE": "django.db.backends.sqlite3",
-            "NAME": BASE_DIR / "db.sqlite3",
-        }
-    }
+# if not DEBUG:
+DATABASE_URL = config('DATABASE_URL')
+DATABASES = {
+    'default': dj_database_url.parse(DATABASE_URL)
+}
+# else:
+#     DATABASES = {
+#         "default": {
+#             "ENGINE": "django.db.backends.sqlite3",
+#             "NAME": BASE_DIR / "db.sqlite3",
+#         }
+#     }
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
@@ -127,25 +127,26 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 
-if not DEBUG:
-    CHANNEL_LAYERS = {
-        "default": {
-            "BACKEND": "channels_redis.core.RedisChannelLayer",
-            "CONFIG": {
-                "hosts": [config('REDIS_URL', default='redis://127.0.0.1:6379')],
-            },
-        },
-    }
-else:
-    CHANNEL_LAYERS = {
-        "default": {
-            "BACKEND": "channels_redis.core.RedisChannelLayer",
-            "CONFIG": {
-                "hosts": [("127.0.0.1", 6379)],
-            },
-        },
-    }
+# if not DEBUG:
 
+# else:
+#     CHANNEL_LAYERS = {
+#         "default": {
+#             "BACKEND": "channels_redis.core.RedisChannelLayer",
+#             "CONFIG": {
+#                 "hosts": [("127.0.0.1", 6379)],
+#             },
+#         },
+#     }
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [config('REDIS_URL', default='redis://127.0.0.1:6379')],
+        },
+    },
+}
 
 LOGOUT_REDIRECT_URL = '/login/'
 
