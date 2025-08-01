@@ -1,10 +1,8 @@
 from django.db import models
-from django.contrib.auth import get_user_model
-
-User = get_user_model()
+from django.conf import settings
 
 class Message(models.Model):
-    sender = models.ForeignKey(User, on_delete=models.CASCADE)
+    sender = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     room_name = models.CharField(max_length=255)
     content = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
@@ -15,7 +13,7 @@ class Message(models.Model):
 
 class ChatRoom(models.Model):
     name = models.CharField(max_length=100, unique=True)
-    members = models.ManyToManyField(User, related_name='chat_rooms')
+    members = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='chat_rooms')
     is_group = models.BooleanField(default=False)
     creation_date = models.DateField(auto_now_add=True)
 
