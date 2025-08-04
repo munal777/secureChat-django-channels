@@ -108,12 +108,11 @@ def create_group_view(request):
             room.members.add(request.user)
             room.save()
 
-            print("hello here")
+            print(room.name)
 
             return redirect("chat_room", room_name=room.name)
         
         messages.error(request, "The enter room name already exists.")
-        print("got here")
         return redirect("dashboard")
     
 
@@ -122,6 +121,8 @@ def leave_group_view(request):
     if request.method == "POST":
         group_name = request.POST["room_name"]
         user = request.user
+        
+        print(group_name)
 
         room = ChatRoom.objects.get(name=group_name, is_group=True)
         room.members.remove(user)
