@@ -6,6 +6,6 @@ from chat.views import landing_page_view
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', landing_page_view, name='landing_page'),
-    path('api/', include('chat.urls')),
-    path('api/', include('accounts.urls')),
+    path('chat/', include('chat.urls')),
+    path('accounts/', include('accounts.urls')),
 ]
