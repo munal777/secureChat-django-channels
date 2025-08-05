@@ -3,7 +3,9 @@ from channels.db import database_sync_to_async
 
 from .utils import save_message
 from .models import ChatRoom
+
 import json
+import re
 
 class PrivateChatConsumer(AsyncWebsocketConsumer):
     """
@@ -112,8 +114,11 @@ class GroupChatConsumer(AsyncWebsocketConsumer):
 
     async def connect(self):
         self.room_name = self.scope['url_route']['kwargs']['room_name']
-        self.room_group_name = f'chat_{self.room_name}'
+        self.room_group_name = "chat_" + re.sub(r"[^a-zA-Z0-9_.-]", "_", self.room_name)
         self.user = self.scope['user']
+
+        print("Decoded room name in ws:", self.room_name)
+        print("room group name:", self.room_group_name)
 
         try:
             room = await database_sync_to_async(ChatRoom.objects.get)(name=self.room_name)

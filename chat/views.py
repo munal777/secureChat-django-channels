@@ -1,7 +1,11 @@
+import re
+
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model
 from django.contrib import messages
+
+from urllib.parse import unquote, quote
 
 from .utils import make_room_name, decrypted_history_msg
 from .models import Message, ChatRoom
@@ -58,6 +62,8 @@ def chat_view(request, room_name):
         room = None
         is_group = False
         members_num = None
+    
+    print(f"room name in chat: {room_name}")
         
     return render(request, 'chat.html', {
         'room_name': room_name,
@@ -99,7 +105,20 @@ def landing_page_view(request):
 @login_required
 def create_group_view(request):
     if request.method == "POST":
-        group_name = request.POST["room_name"]
+        raw_group_name = request.POST["room_name"].strip()
+
+        group_name = re.sub(r'\s+', ' ', raw_group_name)
+
+        # Check valid characters: letters, numbers, space, underscore, dash
+        if not re.fullmatch(r'[A-Za-z0-9 _-]+', group_name):
+            messages.error(request, "Group name can only contain letters, numbers, spaces, underscores, or dashes.")
+            return redirect("dashboard")
+
+        # Ensure group name contains at least one letter or number
+        if not re.search(r'[A-Za-z0-9]', group_name):
+            messages.error(request, "Group name must include at least one letter or number.")
+            return redirect("dashboard")
+
         member_ids = request.POST.getlist("members")
 
         if not ChatRoom.objects.filter(name=group_name).exists():
@@ -107,8 +126,6 @@ def create_group_view(request):
             room.members.set(User.objects.filter(id__in = member_ids))
             room.members.add(request.user)
             room.save()
-
-            print(room.name)
 
             return redirect("chat_room", room_name=room.name)
         
@@ -124,8 +141,11 @@ def leave_group_view(request):
         
         print(group_name)
 
-        room = ChatRoom.objects.get(name=group_name, is_group=True)
-        room.members.remove(user)
+        try:
+            room = ChatRoom.objects.get(name=group_name, is_group=True)
+            room.members.remove(user)
+        except ChatRoom.DoesNotExist:
+             print("Group does not exist.")
         
         return redirect('dashboard')
 
