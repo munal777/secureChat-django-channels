@@ -3,6 +3,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model
 from django.contrib import messages
 
+from urllib.parse import unquote, quote
+
 from .utils import make_room_name, decrypted_history_msg
 from .models import Message, ChatRoom
 
@@ -58,6 +60,8 @@ def chat_view(request, room_name):
         room = None
         is_group = False
         members_num = None
+    
+    print(f"room name in chat: {room_name}")
         
     return render(request, 'chat.html', {
         'room_name': room_name,
@@ -108,8 +112,6 @@ def create_group_view(request):
             room.members.add(request.user)
             room.save()
 
-            print(room.name)
-
             return redirect("chat_room", room_name=room.name)
         
         messages.error(request, "The enter room name already exists.")
@@ -124,8 +126,11 @@ def leave_group_view(request):
         
         print(group_name)
 
-        room = ChatRoom.objects.get(name=group_name, is_group=True)
-        room.members.remove(user)
+        try:
+            room = ChatRoom.objects.get(name=group_name, is_group=True)
+            room.members.remove(user)
+        except ChatRoom.DoesNotExist:
+             print("Group does not exist.")
         
         return redirect('dashboard')
 
