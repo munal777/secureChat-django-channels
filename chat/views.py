@@ -5,8 +5,6 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model
 from django.contrib import messages
 
-from urllib.parse import unquote, quote
-
 from .utils import make_room_name, decrypted_history_msg
 from .models import Message, ChatRoom
 
@@ -139,7 +137,6 @@ def leave_group_view(request):
         group_name = request.POST["room_name"]
         user = request.user
         
-        print(group_name)
 
         try:
             room = ChatRoom.objects.get(name=group_name, is_group=True)
