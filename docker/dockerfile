@@ -2,15 +2,15 @@
 ARG PYTHON_VERSION=3.11
 FROM python:${PYTHON_VERSION}-slim AS base
 
-# Stage 1: Build our dependency wheels
 FROM base AS python-build-stage
 
 RUN apt-get update && apt-get install -y \
     build-essential \
     libpq-dev \
+    libssl-dev \
     && rm -rf /var/lib/apt/lists/*
 
-COPY requirements.txt .
+COPY ./requirements.txt .
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 
@@ -18,4 +18,4 @@ COPY . .
 
 EXPOSE 8000
 
-CMD ["daphne", "-b", "0.0.0.0", "-p", "8000", "myproject.asgi:application"]
+ENTRYPOINT [ "/start.sh" ]
