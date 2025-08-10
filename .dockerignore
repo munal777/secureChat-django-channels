@@ -1,0 +1,29 @@
+# Python bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment (don’t send to Docker, you’ll install fresh inside container)
+venv/
+chat-env/
+
+# Git
+.git
+.gitignore
+
+# Local env/config
+.env
+*.sqlite3
+
+# Django cache/static/media (only collect in container if needed)
+staticfiles/
+media/
+
+# Logs
+*.log
+
+# Editor/OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
