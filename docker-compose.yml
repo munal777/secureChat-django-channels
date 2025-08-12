@@ -32,7 +32,6 @@ services:
       dockerfile: docker/Dockerfile
     container_name: chatapp_web
     restart: unless-stopped
-    command: docker/start.sh
     volumes:
       - .:/app
     ports:
